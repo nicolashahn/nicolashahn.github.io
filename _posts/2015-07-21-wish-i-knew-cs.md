@@ -22,7 +22,7 @@ At some point I realized I actually enjoy learning Computer Science. I realize I
 
 The point is that if you've just started a CS degree, switched from something else, or are thinking about doing so, the following tips may make your life significantly easier. If you've already started, then you've probably figured out some of these on your own.
 
-### 1. Google your problems, errors
+### 1. Google your problems and errors
 
 99% of the time, if you're stuck on some problem or can't figure out why the compiler's throwing you that error, someone else has been there, done that. The sooner you figure out how to craft queries that get you the exact StackOverflow link you want, the less time you'll spend frustrated. Never go to the documentation first, always google the error or keywords of whatever problem you're trying to solve. If you can learn to make this your initial reflex when you're stumped, you'll save a _lot_ of time.
 
@@ -40,7 +40,7 @@ For sufficiently large or complicated problems, it's going to be very difficult 
 
 What I mean by this is that whenever you have a large problem, it can almost certainly be broken down into smaller pieces. Solve these pieces independently using their own functions, and ensure they work properly before using them in a larger function. 
 
-For example, if you're trying to sum all the numbers in a certain range whose digits add to a certain amount (for example, 147's digits are 1 + 4 + 7 = 12), first write a function called __addDigits(n)__ that takes a number _n_ and returns the sum of its digits. Then use this function in a larger one called __sumNumbers(i,j,n)__ that, in the range from _i_ to _j_, sums all the numbers whose digits add to _n_.
+For example, if you're trying to sum all the numbers in a certain range whose digits add to a certain amount (for example, 147's digits are 1 + 4 + 7 = 12), first write a function called `addDigits(n)` that takes a number `n` and returns the sum of its digits. Then use this function in a larger one called `sumNumbers(i,j,n)` that, in the range from `i` to `j`, sums all the numbers whose digits add to `n`.
 
 ### 5. Make your code readable
 
@@ -69,6 +69,8 @@ I would argue that your interpersonal and language skills are just as important 
 
 Unless you're so technically impressive that you don't need interpersonal skills, actively practice and take steps to build them.
 
-### 9. The quickest way to learn is by doing, not reading
+### 9. The quickest way to learn is by doing
 
-You can read articles, books, documentation for hours, but unless you have a project with a specific goal in mind, you're not going to learn as effectively. Information is retained much better when applied. Instead of reading about Android, build an app. Pick a project you find interesting - if you don't, you'll retain a lot less and likely end up not finishing it.
+You can read articles, books, documentation for hours, but unless you have a project with a specific goal in mind, you're not going to retain nearly as much as if you applied it to a project. Instead of reading about Android, build an app. Pick a project you find interesting - if you don't, you'll retain a lot less and likely end up not finishing it.
+
+So stop reading this article, pick an interesting project, and start doing it.
