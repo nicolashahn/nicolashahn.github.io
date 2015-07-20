@@ -4,7 +4,7 @@ email:       nicolas@stonespring.org
 author:      Nicolas Hahn
 description: From my grey meat computer to your photon emission rectangle
 baseurl:     ""
-url:         "http://nicolashahn.github.io"
+url:         ""
 
 # Google analytics
 google_analytics:
