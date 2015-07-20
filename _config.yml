@@ -1,10 +1,10 @@
 # Site settings
-title:       untitled
+title:       To Be Determined
 email:       nicolas@stonespring.org
 author:      Nicolas Hahn
 description: Thoughts posted every sometimes
-baseurl:     ""
-url:         "nicolas@stonespring.org"
+baseurl:     "/nicolashahn.github.io"
+url:         "http://nicolashahn.github.io"
 
 # Google analytics
 google_analytics:
@@ -20,11 +20,11 @@ show_social_icons:  false
 disqus_shortname:
 
 # Social icons
-github_username:
+github_username: nicolashahn
 stackoverflow_id:
 twitter_username:
 google_plus_id:
-linkedin_username:
+linkedin_username: 
 angellist_username:
 medium_id:
 bitcoin_url:
