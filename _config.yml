@@ -1,5 +1,5 @@
 # Site settings
-title:       Inarticulate Rambulations
+title:       Brainfarts
 email:       nicolas@stonespring.org
 author:      Nicolas Hahn
 description: From my grey meat computer to your photon emission rectangle
@@ -10,7 +10,7 @@ url:         "http://nicolashahn.github.io"
 google_analytics:
 
 # Optional features
-animated:           true
+animated:           false
 show_related_posts: false
 show_post_footers:  false
 show_social_icons:  false
