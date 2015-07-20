@@ -17,7 +17,7 @@ A series of factoids, with citations from [dubious sources](http://gawker.com/) 
 
 An almost definitely fictional story perfectly demonstrating the main point.
 
-# A quotation from later on in the article in large font.
+# "A quotation from later on in the article in large font."
 
 
 Midway through, a list of bullet points!
