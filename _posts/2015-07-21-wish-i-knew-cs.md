@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      What I Wish I Knew Going Into A CS Degree
+title:      What I Wish I Knew Going Into A Computer Science Degree
 date:       2015-07-20
 summary:    Tips for other students who just wanted a technical degree, but found themselves enjoying it
 categories: 
