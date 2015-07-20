@@ -12,9 +12,7 @@ categories:
 ### An interesting, possibly controversial opinion. 
 
 Something along the lines of "Now, I know this seems crazy, but hear me out..."
-
-A series of factoids, with citations from [dubious sources](http://gawker.com/) or [other blogs.](http://vsinha.com/)
-
+A series of factoids, with citations from [dubious sources](http://gawker.com/) and often mentioning [other blogs.](http://vsinha.com/)
 An almost definitely fictional story perfectly demonstrating the main point.
 
 # "A quotation from later on in the article in large font."
@@ -22,9 +20,9 @@ An almost definitely fictional story perfectly demonstrating the main point.
 
 Midway through, a list of bullet points!
 
-* Easy to read
+* People like reading lists, solid blocks of text are painful
 * Seems like I have more information than I actually do
-* Repeat myself in a different format to appear to have more content
+* Repeat myself to appear to have more content
 
 
 Summarization of the material presented and the point of the post.
