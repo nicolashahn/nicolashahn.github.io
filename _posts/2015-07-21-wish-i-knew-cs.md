@@ -4,6 +4,7 @@ title:      What I Wish I Knew Going Into A Computer Science Degree
 date:       2015-07-20
 summary:    Tips for other students who just wanted a technical degree, but found themselves enjoying it
 categories: 
+published: false
 ---
 
 I was floating through college at University of California Santa Cruz. As a freshman, I picked an Art degree because it was vaguely related to graphic design, which was vaguely what I wanted to do when I graduated high school. Because I was so directionless, I just wanted the college experience - my actual education was secondary. In hindsight, this _may_ have been a mistake. 
