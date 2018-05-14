@@ -1,8 +1,8 @@
 # Site settings
-title:       Brainfarts
+title:       blog
 email:       nicolas@stonespring.org
 author:      Nicolas Hahn
-description: From my grey meat computer to your photon emission rectangle
+description: programmador, artmaker, weird thinker
 baseurl:     ""
 url:         "http://nicolashahn.github.io"
 
