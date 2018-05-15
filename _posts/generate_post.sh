@@ -19,7 +19,7 @@ main() {
     cp "unpublished/template.md" "$POST_FILE"
     sed -i '' -- "s/DATE/$DATE/g" "$POST_FILE"
 
-    echo "New post file created at: $POST_FILE"
+    echo "$POST_FILE"
     exit 0
 }
 
