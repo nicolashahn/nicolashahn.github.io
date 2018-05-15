@@ -2,7 +2,7 @@
 layout:     post
 title:      Recurse Center TODO List
 date:       2018-05-15
-summary:    Some things I might get done at the Recurse Center
+summary:    Some things I might get done at the Recurse Center.
 categories: recurse-center
 ---
 
@@ -58,11 +58,11 @@ The last few weeks I've spent traveling, relaxing, taking care of things I've be
 * Give Spacemacs a chance - use it for a full week or two (after configuration is settled)
   * Learn Org mode 
   * Maybe VScode too? Spacemacs first
+* Read the [Competitive Programmer's Handbook](https://cses.fi/book.html)
+  * Learn some C++ along the way
 * Day where I pick a technical paper/discussion, and every time I come across a term I don’t fully understand, I do a recursive Wikipedia (and other resources) deep dive 
 * Fully grok git: [https://news.ycombinator.com/item?id=16587174](https://news.ycombinator.com/item?id=16587174)
 * Learn to habitually use `pdb` (and other debuggers)
-* Read the [Competitive Programmer's Handbook](https://cses.fi/book.html)
-  * Learn some C++ along the way
 * Do some stats on a [Kaggle](https://www.kaggle.com/) dataset
 * Gain a true understanding of the tools I use, and plug the holes in my knowledge of them - a lot of the time I learn just enough to complete the task given, but I want to cover more ground - Python, Javascript/Typescript, Flask, React
 * Code reviews - give and receive feedback, hopefully daily
