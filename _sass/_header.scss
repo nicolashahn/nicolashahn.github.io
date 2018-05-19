@@ -1,15 +1,17 @@
 .logo{
-  padding-right: $space-1;
   width: 2.5rem;
   height: 2.5rem;
+  display: inline-block;
 }
 
 .site-title-text {
   display: inline-block;
+  margin-left: $space-1;
 }
 
 .site-title-name {
   font-weight: 600;
+  float: left;
 }
 
 .site-description {
