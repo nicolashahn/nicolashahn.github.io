@@ -2,7 +2,16 @@
   <div class="mt2 wrap">
     <div class="measure">
       <a href="{{ site.url }}" class="site-title">
-        <img class="logo" src="{{ site.url }}/images/favicon-200x200.png" alt="logo"> {{ site.title }}
+        <img
+          class="logo"
+          src="{{ site.url }}/images/favicon-200x200.png"
+          alt="logo">
+        <div class="site-title-text">
+          <div class="site-title-name">{{ site.title }}</div>
+          <div class="site-description">
+            {{ site.description }}
+          </div>
+        </div>
       </a>
       <nav class="site-nav">
         {% include navigation.html %}
@@ -11,7 +20,6 @@
       {% if site.show_social_icons %}
         {% include social_links.html %}
       {% endif %}
-      {{ site.description }}
     </div>
   </div>
 </header>

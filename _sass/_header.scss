@@ -1,7 +1,19 @@
 .logo{
-  padding-right:10px;
-  width: $space-2;
-  height: $space-2;
+  padding-right: $space-1;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.site-title-text {
+  display: inline-block;
+}
+
+.site-title-name {
+  font-weight: 600;
+}
+
+.site-description {
+  font-size: $base-font-size;
 }
 
 .site-header {
@@ -16,7 +28,7 @@
 }
 
 .site-header .site-title {
-  font-size: $h2;
+  font-size: $h3;
 }
 
 .site-nav {
