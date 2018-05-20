@@ -59,22 +59,35 @@
     <!--<link rel="icon" type="image/png" href="/images/favicon-32x32.png" sizes="32x32">-->
         
     {% if site.google_analytics %}
-    <!--https://desiredpersona.com/google-analytics-jekyll/-->
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <!--<script async src="https://www.googletagmanager.com/gtag/js?id={{site.google_analytics}}"></script>-->
     <!--<script>-->
-        <!--window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;-->
-        <!--ga('create', '{{ site.google_analytics }}', 'auto');-->
-        <!--ga('send', 'pageview');-->
+      <!--window.dataLayer = window.dataLayer || [];-->
+      <!--function gtag(){dataLayer.push(arguments);}-->
+      <!--gtag('js', new Date());-->
+      <!--gtag('config', '{{ site.google_analytics }}');-->
     <!--</script>-->
-    <!--<script async src='https://www.google-analytics.com/analytics.js'></script>-->
-    <script type="text/javascript">
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', '{{ site.google_analytics }}']);
-      _gaq.push(['_trackPageview']);
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
+
+    <!--https://desiredpersona.com/google-analytics-jekyll/-->
+    <script>
+        window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+        ga('create', '{{ site.google_analytics }}', 'auto');
+        ga('send', 'pageview');
     </script>
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
+
+    <!--Original GA code-->
+    <!--<script type="text/javascript">-->
+      <!--var _gaq = _gaq || [];-->
+      <!--_gaq.push(['_setAccount', '{{ site.google_analytics }}']);-->
+      <!--_gaq.push(['_trackPageview']);-->
+      <!--(function() {-->
+        <!--var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;-->
+        <!--ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';-->
+        <!--var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);-->
+      <!--})();-->
+    <!--</script>-->
+
     {% endif %}
 </head>
