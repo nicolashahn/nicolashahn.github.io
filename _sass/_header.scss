@@ -7,6 +7,9 @@
 .site-title-text {
   display: inline-block;
   margin-left: $space-1;
+  // following lines are only if description field is blank
+  height: 2.5rem;
+  line-height: 2.5rem;
 }
 
 .site-title-name {

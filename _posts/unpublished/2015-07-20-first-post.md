@@ -4,6 +4,8 @@ title:      Hard-Hitting, Attention-Grabbing Title
 date:       2015-07-20
 summary:    Articulate and concise summary of the article.
 categories: 
+published:  false
+
 ---
 
 ![desk](https://cloud.githubusercontent.com/assets/1424573/3378137/abac6d7c-fbe6-11e3-8e09-55745b6a8176.png)
