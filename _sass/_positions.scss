@@ -5,3 +5,10 @@
 .right {
   float: right;
 }
+
+// little hack to get markdown images centered
+// apply like: ![blah](www.blah.com/image.jpg?style=centered)
+img[src$="centered"] {
+  display: block;
+  margin: 0 auto;
+}
