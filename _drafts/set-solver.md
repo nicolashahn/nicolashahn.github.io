@@ -9,11 +9,11 @@ published:  true
 ---
 
 ![set game]({{site.url}}/images/set-solver/solved12_small.jpg?style=centered)
-*Sets are indicated by cards having the same outline color.*
+*<center>Sets are indicated by cards that have the same outline color.</center>*
 
 [SET](https://puzzles.setgame.com/set/rules_set.htm){:target="_blank"} was a game I used to play with my family years ago, and I was reintroduced to it recently while attending the [Recurse Center](https://recurse.com){:target="_blank"}. I was looking for an excuse to play with OpenCV, and teaching a computer to play SET seemed like a good choice.
 
-A quick primer on SET: each card has four attributes: shape, color, number, and fill, each of which can have three different values. There are 3<sup>4</sup> combinations, and so a deck of SET cards has 81 total. A set is three cards that, for each of these attributes, are either all the same, or all different. There’s usually going to be 12, sometimes 15, and [very rarely 18](https://norvig.com/SET.html) cards out at any given time. Whoever can identify a set the fastest gets the set, and whoever has the most sets by the time the entire deck is dealt has won the game.
+A quick primer on SET: each card has four attributes: shape, color, number, and fill, each of which can have three different values. There are 3<sup>4</sup> combinations, and so a deck of SET cards has 81 total. A set is three cards that, for each of these attributes, are either all the same, or all different. There’s usually going to be 12, sometimes 15, and [very rarely 18](https://norvig.com/SET.html) cards out at any given time. Whoever can identify a set the fastest wins it, and whoever has the most sets by the time the entire deck is dealt has won the game.
 
 ## Extracting cards from the image
 
@@ -41,13 +41,13 @@ As it turns out, this only sort of works: it can often get the correct shape and
 
 ![diffimg]({{site.url}}/images/set-solver/diff_card.jpg?style=centered)
 
-*Diff image made from two images of the same card. Slight misalignment can cause large `diff` values.*
+*<center>Diff image made from two images of the same card. Brighter pixels are where the images differ. Slight misalignment as seen here can cause large diff scores.</center>*
 
 Looks like we'll have to be a bit more sophisticated. I decided I would try to classify each attribute separately, and assemble the results to get the final card classification.
 
 ## Color
 
-An idea I had for this was to distill the average color of a card's shape(s) into one RGB value, and compare it against the averages of labeled cards. A friend showed me [an article](https://mzucker.github.io/2016/09/20/noteshrink.html){:target="_blank"} on [Noteshrink](https://github.com/mzucker/noteshrink){:target="_blank"} with code for doing exactly that. Broadly, the way it works is: given a number of colors `n`, reduce the bit depth of each pixel's color information until all the pixel's color values fit in `n` buckets. Doing so pushes hues that are close to each other in 3-dimensional RGB space towards a single value. So for example, using this image:
+An idea I had for this was to distill the average color of a card's shape(s) into one RGB value, and compare it against the averages of labeled cards. A [friend](https://github.com/okayzed) showed me [an article](https://mzucker.github.io/2016/09/20/noteshrink.html){:target="_blank"} on [Noteshrink](https://github.com/mzucker/noteshrink){:target="_blank"} with code for doing exactly that. Broadly, the way it works is: given a number of colors `n`, reduce the bit depth of each pixel's color information until all the pixel's color values fit in `n` buckets. Doing so pushes hues that are close to each other in 3-dimensional RGB space towards a single value. So for example, using this image:
 
 ![diffimg]({{site.url}}/images/set-solver/purple-triple-solid-diamond.jpg?style=centered)
 
@@ -59,16 +59,16 @@ Once we have this image that has been reduced to a single color on a while backg
 
 ## Number
 
-Classifying the number of the card [works very similarly](https://github.com/nicolashahn/set-solver/blob/50c20e7a88782b7e5f1b3e65ed5fa769b6379003/find_shapes.py) to the card extraction process. We again use `cv2.findContours()` to find the contours in the image, and count how many are over a certain minimum area value (to avoid things like specks of dust or stains on the card). 
+Classifying the number of the card [works very similarly](https://github.com/nicolashahn/set-solver/blob/50c20e7a88782b7e5f1b3e65ed5fa769b6379003/find_shapes.py) to the card extraction process. We again use `cv2.findContours()` to find the contours in the image, and count how many are over a certain minimum area value (to avoid things like reflections, stains, or specks of dust on the card). 
 
 ![shape cutouts]({{site.url}}/images/set-solver/find_shapes.jpg?style=centered)
 
 ## Shape & Fill
 
-The shape and fill classifiers use OpenCV's [ORB](https://docs.opencv.org/3.0-alpha/doc/py_tutorials/py_feature2d/py_orb/py_orb.html), a [feature detection](https://en.wikipedia.org/wiki/Feature_detection_(computer_vision)) algorithm. A feature is basically an interesting point in an image, oftentimes a corner/curve of a shape, or an isolated point, but there is no hard definition of what features can be. Basically, they represent what the algorithm both thinks are "interesting" parts of the image, and are also repeatable - the algorithm needs to be able to use features to find the same object in different images.
+The shape and fill classifiers use OpenCV's [ORB](https://docs.opencv.org/3.0-alpha/doc/py_tutorials/py_feature2d/py_orb/py_orb.html), a [feature detection](https://en.wikipedia.org/wiki/Feature_detection_(computer_vision)) algorithm. A feature is basically what the algorithm thinks is an "interesting" part of an image, oftentimes a corner/curve of a shape, or an isolated point, but there is no hard definition of what features can be. They are also repeatable - the algorithm needs to be able to use features to find the same object in different images.
 
 ![shape keypoints]({{site.url}}/images/set-solver/shape_keypoints.jpg?style=centered)
-*<center>Keypoints that ORB discovers - only the top few are used for classification.</center>*
+*<center>Keypoints that ORB discovers.</center>*
 
 The classifiers start with a cutout of one of the shapes of the card that was found during the number classification step, and the top few features (the ones that ORB thinks are the most important) are compared to the top few features of each of the possible labeled shape+fill combinations. The labeled shape with the most matches is used as for the fill classification for the card.
 
@@ -81,21 +81,18 @@ Now all four attributes of the card have been classified, and so we know what ca
 
 ## Finding the Sets
 
-This turns out to be the simplest part of the system! The logic for solving SET after all cards have been classified is more or less:
+This turns out to be the simplest part of the system! The [logic](https://github.com/nicolashahn/set-solver/blob/9c9cab40bbf3608cad13a990e3ebbc40a6337355/SetGame.py#L69) for solving SET after all cards have been classified is just:
+* Generate all combinations of three cards. 
+* Discard the combos where any of the attributes (color, number, shape, fill) have exactly two unique values (for example: the card numbers are `[1, 1, 3]`). The [rules page](https://puzzles.setgame.com/set/rules_set.htm) calls this the "Magic Rule": If two are... and one is not, then it is __not__ a set.
 
-```py
+```python
 def is_set(cards):
-  # `attrs` looks like: {"number":3, "shape":"squiggle, ...}
   for attr in cards[0].attrs.keys(): 
-    # check if any of the attributes are not all the same,
-    # or all different: where # of unique values is 2
-    # (1 would mean all the same, 3 means all different)
     if len(set([card.attrs[attr] for card in cards])) == 2:
       return False
   return True
 
 def find_sets(cards):
-  # check all combinations of three cards we can make
   combos = itertools.combinations(cards, 3)
   sets = [c for c in combos if is_set(c)]
   return sets
@@ -111,8 +108,10 @@ And we're done!
 
 ## Where to go from here
 
-There's two things I've thought about doing at this point, both involve augmented reality.
+So far, I've thought about two methods of extending the project, both involve augmented reality.
 
 My original plan was to have it run on a phone as an AR app - this would probably require a rewrite in something other than python, as well as optimizations so that it can update in real time (it takes about 5 seconds to generate the above image on my early-2016 15" Macbook Pro).
 
 Another idea that was presented to me: play against the computer using a projector and webcam mounted on the ceiling pointing at a table (which the Recurse Center has). The projector could display just the colored borders around cards on the table. Difficulty could be set by how long the computer would wait before showing a set.
+
+Special thanks to my friend [Okay](https://github.com/okayzed) for encouragement, guidance, and contribution!
