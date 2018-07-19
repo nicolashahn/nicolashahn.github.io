@@ -4,7 +4,7 @@ title:      SET Card Game Solver with OpenCV and Python
 date:       2018-07-01
 summary:    Teaching my computer to beat me at SET
 categories: recurse center
-published:  false
+published:  true
 
 ---
 
@@ -35,7 +35,7 @@ In order to solve the image, we're going to need to know what cards are in it. I
 
 ![Labeling]({{site.url}}/images/set-solver/labeling.jpg?style=centered)
 
-We now have individual images of all the cards in the deck, labeled. Great! Now, we need to discern the attributes of an unknown card. I prefer to use the simplest method that works, so let's try something naive: differentiate each card in a SET game against every image in our deck dataset, using a small python library I wrote called [diffimg](https://github.com/nicolashahn/diffimg), which computes the difference in two images of the same size by comparing the RGB channel values for pixels at the same coordinates in the images.
+We now have individual images of all the cards in the deck, labeled. Great! Now, we need to classify the attributes of an unknown card. I prefer to use the simplest method that works, so let's try something easy: differentiate each card in a SET game against every image in our deck dataset, using a small python library I wrote called [diffimg](https://github.com/nicolashahn/diffimg), which computes the difference in two images of the same size by comparing the RGB channel values for pixels at the same coordinates.
 
 As it turns out, this only sort of works: it can often get the correct shape and number, but not the shade and color. It often confuses red and purple, as well as striped and outlined shapes. As it turns out, when you do a per-pixel comparison, things like the lighting of the image and slight positional misalignment overwhelm the shape/color/shade/fill match.
 
@@ -51,7 +51,7 @@ An idea I had for this was to distill the average color of a card's shape(s) int
 
 ![diffimg]({{site.url}}/images/set-solver/purple-triple-solid-diamond.jpg?style=centered)
 
-We set `n = 2` to condense all the different purple hues into one value (the beige-ish tone being replaced with white and the increase in purple saturation is an artifact of the original intention of Noteshrink):
+We set `n = 2` to condense all the different purple hues into one value (the beige tone being replaced with white and the increase in purple saturation are artifacts of the original intention of Noteshrink):
 
 ![diffimg]({{site.url}}/images/set-solver/noteshrink.png?style=centered)
 
@@ -59,7 +59,7 @@ Once we have this image that has been reduced to a single color on a while backg
 
 ## Number
 
-Classifying the number of the card works very similarly to the card extraction process. We again use `cv2.findContours()` to find the contours in the image, and count how many are over a certain minimum area value (to avoid things like specks of dust or stains on the card). 
+Classifying the number of the card [works very similarly](https://github.com/nicolashahn/set-solver/blob/50c20e7a88782b7e5f1b3e65ed5fa769b6379003/find_shapes.py) to the card extraction process. We again use `cv2.findContours()` to find the contours in the image, and count how many are over a certain minimum area value (to avoid things like specks of dust or stains on the card). 
 
 ![shape cutouts]({{site.url}}/images/set-solver/find_shapes.jpg?style=centered)
 
@@ -68,12 +68,14 @@ Classifying the number of the card works very similarly to the card extraction p
 The shape and fill classifiers use OpenCV's [ORB](https://docs.opencv.org/3.0-alpha/doc/py_tutorials/py_feature2d/py_orb/py_orb.html), a [feature detection](https://en.wikipedia.org/wiki/Feature_detection_(computer_vision)) algorithm. A feature is basically an interesting point in an image, oftentimes a corner/curve of a shape, or an isolated point, but there is no hard definition of what features can be. Basically, they represent what the algorithm both thinks are "interesting" parts of the image, and are also repeatable - the algorithm needs to be able to use features to find the same object in different images.
 
 ![shape keypoints]({{site.url}}/images/set-solver/shape_keypoints.jpg?style=centered)
+*<center>Keypoints that ORB discovers - only the top few are used for classification.</center>*
 
 The classifiers start with a cutout of one of the shapes of the card that was found during the number classification step, and the top few features (the ones that ORB thinks are the most important) are compared to the top few features of each of the possible labeled shape+fill combinations. The labeled shape with the most matches is used as for the fill classification for the card.
 
 The shape classification is identical, save for one step: an edge detection filter `cv2.Canny()` is applied to the shape image before ORB is applied. This was added as a result of trial and error, but my intuition is that `cv2.Canny()` cuts down a lot of detail in the image that's useful for fill detection, but is just noise when looking at shape.
 
 ![canny]({{site.url}}/images/set-solver/canny_shape.jpg?style=centered)
+*<center>Canny reduces the image to pure white and black pixels, reducing noise.</center>*
 
 Now all four attributes of the card have been classified, and so we know what cards we have on the table. Now we can find all the sets.
 
@@ -83,12 +85,17 @@ This turns out to be the simplest part of the system! The logic for solving SET 
 
 ```py
 def is_set(cards):
+  # `attrs` looks like: {"number":3, "shape":"squiggle, ...}
   for attr in cards[0].attrs.keys(): 
+    # check if any of the attributes are not all the same,
+    # or all different: where # of unique values is 2
+    # (1 would mean all the same, 3 means all different)
     if len(set([card.attrs[attr] for card in cards])) == 2:
       return False
   return True
 
 def find_sets(cards):
+  # check all combinations of three cards we can make
   combos = itertools.combinations(cards, 3)
   sets = [c for c in combos if is_set(c)]
   return sets
