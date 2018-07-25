@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      SET Card Game Solver with OpenCV and Python
-date:       2018-07-20
+date:       2018-07-25
 summary:    Teaching my computer to beat me at SET
 categories: recurse center
 published:  true
