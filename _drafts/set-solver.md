@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      SET Card Game Solver with OpenCV and Python
-date:       2018-07-01
+date:       2018-07-20
 summary:    Teaching my computer to beat me at SET
 categories: recurse center
 published:  true
@@ -28,6 +28,8 @@ Nandi’s method also assumes orientation of cards - I want my implementation to
 With these methods, my limited testing showed that if you’re careful about the lighting and angle, the program will reliably extract the individual cards from the image.
 
 ![find the corners]({{site.url}}/images/set-solver/find_cards.jpg?style=centered)
+*<center>The contours are returned as sets of corner coordinates.</center>*
+
 
 ## Classifying cards
 
@@ -35,7 +37,7 @@ In order to solve the image, we're going to need to know what cards are in it. I
 
 ![Labeling]({{site.url}}/images/set-solver/labeling.jpg?style=centered)
 
-We now have individual images of all the cards in the deck, labeled. Great! Now, we need to classify the attributes of an unknown card. I prefer to use the simplest method that works, so let's try something easy: differentiate each card in a SET game against every image in our deck dataset, using a small python library I wrote called [diffimg](https://github.com/nicolashahn/diffimg), which computes the difference in two images of the same size by comparing the RGB channel values for pixels at the same coordinates.
+We now have individual images of all the cards in the deck, labeled. Great! Now, we need to classify the attributes of an unknown card. I prefer to use the simplest method that works, so let's try something easy: differentiate each card in a SET game against every image in our deck dataset. I used a small python library I wrote called [diffimg](https://github.com/nicolashahn/diffimg), which quantifies the difference in two images of the same size by comparing the RGB channel values for pixels at the same coordinates.
 
 As it turns out, this only sort of works: it can often get the correct shape and number, but not the shade and color. It often confuses red and purple, as well as striped and outlined shapes. As it turns out, when you do a per-pixel comparison, things like the lighting of the image and slight positional misalignment overwhelm the shape/color/shade/fill match.
 
@@ -47,43 +49,44 @@ Looks like we'll have to be a bit more sophisticated. I decided I would try to c
 
 ## Color
 
-An idea I had for this was to distill the average color of a card's shape(s) into one RGB value, and compare it against the averages of labeled cards. A [friend](https://github.com/okayzed) showed me [an article](https://mzucker.github.io/2016/09/20/noteshrink.html){:target="_blank"} on [Noteshrink](https://github.com/mzucker/noteshrink){:target="_blank"} with code for doing exactly that. Broadly, the way it works is: given a number of colors `n`, reduce the bit depth of each pixel's color information until all the pixel's color values fit in `n` buckets. Doing so pushes hues that are close to each other in 3-dimensional RGB space towards a single value. So for example, using this image:
+An idea I had for this was to distill the average color of a card's shape(s) into one RGB value, and compare it against the averages of labeled cards. A friend showed me [an article](https://mzucker.github.io/2016/09/20/noteshrink.html){:target="_blank"} on [Noteshrink](https://github.com/mzucker/noteshrink){:target="_blank"} with code for doing exactly that. Broadly, the way it works is: given a number of colors `n`, reduce the bit depth of each pixel's color information until all the pixel's color values fit in `n` buckets. Doing so pushes hues that are close to each other in 3-dimensional RGB space towards a single value. So for example, using this image:
 
 ![diffimg]({{site.url}}/images/set-solver/purple-triple-solid-diamond.jpg?style=centered)
 
-We set `n = 2` to condense all the different purple hues into one value (the beige tone being replaced with white and the increase in purple saturation are artifacts of the original intention of Noteshrink):
+We set `n = 2` to condense all the different purple hues into one value:
 
 ![diffimg]({{site.url}}/images/set-solver/noteshrink.png?style=centered)
+*<center>The beige tone being replaced with white and the increase in purple saturation are artifacts of the original intention of Noteshrink.</center>*
 
 Once we have this image that has been reduced to a single color on a while background, we can take the RGB value of that single color and compare it to the averages of each of the red, green, and purple labeled cards (after they've been through the same bucketing process). This is [precomputed](https://github.com/nicolashahn/set-solver/blob/1333af1647dc168605d53b5437142f2c2566e9f5/avg_colors.py){:target="_blank"} to speed up classification. Simply finding the [minimum RGB distance](https://github.com/nicolashahn/set-solver/blob/60ca53521cefb2b95b3e71a70fe3aabe3ef81b12/classify_card.py#L95){:target="_blank"} is enough to get an accurate color classification.
 
 ## Number
 
-Classifying the number of the card [works very similarly](https://github.com/nicolashahn/set-solver/blob/50c20e7a88782b7e5f1b3e65ed5fa769b6379003/find_shapes.py) to the card extraction process. We again use `cv2.findContours()` to find the contours in the image, and count how many are over a certain minimum area value (to avoid things like reflections, stains, or specks of dust on the card). 
+Classifying the number of the card [works very similarly](https://github.com/nicolashahn/set-solver/blob/50c20e7a88782b7e5f1b3e65ed5fa769b6379003/find_shapes.py){:target="_blank"} to the card extraction process. We again use `cv2.findContours()` to find the contours in the image, and count how many are over a certain minimum area value (to avoid things like reflections, stains, or specks of dust on the card). 
 
 ![shape cutouts]({{site.url}}/images/set-solver/find_shapes.jpg?style=centered)
 
 ## Shape & Fill
 
-The shape and fill classifiers use OpenCV's [ORB](https://docs.opencv.org/3.0-alpha/doc/py_tutorials/py_feature2d/py_orb/py_orb.html), a [feature detection](https://en.wikipedia.org/wiki/Feature_detection_(computer_vision)) algorithm. A feature is basically what the algorithm thinks is an "interesting" part of an image, oftentimes a corner/curve of a shape, or an isolated point, but there is no hard definition of what features can be. They are also repeatable - the algorithm needs to be able to use features to find the same object in different images.
+The shape and fill classifiers use OpenCV's [ORB](https://docs.opencv.org/3.0-alpha/doc/py_tutorials/py_feature2d/py_orb/py_orb.html){:target="_blank"}, a [feature detection](https://en.wikipedia.org/wiki/Feature_detection_(computer_vision){:target="_blank"}) algorithm. A feature is basically what the algorithm thinks is an "interesting" part of an image, oftentimes a corner/curve of a shape, or an isolated point, but there is no hard definition of what features can be. They are also repeatable - the algorithm needs to be able to use features to find the same object in different images.
 
 ![shape keypoints]({{site.url}}/images/set-solver/shape_keypoints.jpg?style=centered)
 *<center>Keypoints that ORB discovers.</center>*
 
-The classifiers start with a cutout of one of the shapes of the card that was found during the number classification step, and the top few features (the ones that ORB thinks are the most important) are compared to the top few features of each of the possible labeled shape+fill combinations. The labeled shape with the most matches is used as for the fill classification for the card.
+The classifiers start with a cutout of one of the shapes of the card that was found during the number classification step, and the top few features (the ones that ORB thinks are the most important) are [compared](https://github.com/nicolashahn/set-solver/blob/60ca53521cefb2b95b3e71a70fe3aabe3ef81b12/classify_card.py#L21){:target="_blank"} to the top few features of each of the possible labeled shape+fill combinations. The labeled shape with the most matches is used for the fill classification for the card.
 
-The shape classification is identical, save for one step: an edge detection filter `cv2.Canny()` is applied to the shape image before ORB is applied. This was added as a result of trial and error, but my intuition is that `cv2.Canny()` cuts down a lot of detail in the image that's useful for fill detection, but is just noise when looking at shape.
+The shape classification is identical, save for one step: an edge detection filter `cv2.Canny()` is applied to the shape image before ORB is applied. This was added as a result of trial and error, but my intuition is that `Canny()` cuts down a lot of detail in the image that's useful for fill detection, but is just noise when looking at shape.
 
 ![canny]({{site.url}}/images/set-solver/canny_shape.jpg?style=centered)
-*<center>Canny reduces the image to pure white and black pixels, reducing noise.</center>*
+*<center>Canny edge detection reduces the image to pure white and black pixels, reducing noise.</center>*
 
 Now all four attributes of the card have been classified, and so we know what cards we have on the table. Now we can find all the sets.
 
 ## Finding the Sets
 
-This turns out to be the simplest part of the system! The [logic](https://github.com/nicolashahn/set-solver/blob/9c9cab40bbf3608cad13a990e3ebbc40a6337355/SetGame.py#L69) for solving SET after all cards have been classified is just:
+This turns out to be the simplest part of the system! The [logic](https://github.com/nicolashahn/set-solver/blob/9c9cab40bbf3608cad13a990e3ebbc40a6337355/SetGame.py#L69){:target="_blank"} for solving SET after all cards have been classified is just:
 * Generate all combinations of three cards. 
-* Discard the combos where any of the attributes (color, number, shape, fill) have exactly two unique values (for example: the card numbers are `[1, 1, 3]`). The [rules page](https://puzzles.setgame.com/set/rules_set.htm) calls this the "Magic Rule": If two are... and one is not, then it is __not__ a set.
+* Discard the combos where any of the attributes (color, number, shape, fill) have exactly two unique values (for example: the card number attributes are `[1, 1, 3]`). The [SET rules page](https://puzzles.setgame.com/set/rules_set.htm){:target="_blank"} calls this the "Magic Rule": If two are... and one is not, then it is __not__ a set.
 
 ```python
 def is_set(cards):
@@ -98,9 +101,9 @@ def find_sets(cards):
   return sets
 ```
 
-Generating all 3-card combinations results in O(n<sup>3</sup>) runtime complexity. Not very good, but since there's never going to be more than a handful of cards in an image, this works. There is a way to do it in O(n<sup>2</sup>) - can you figure out how?
+Generating all 3-card combinations results in O(n<sup>3</sup>) runtime complexity. Not ideal, but since there's never going to be more than 15 cards in an image, this works. There is a way to do it in O(n<sup>2</sup>) - can you figure out how?
 
-Knowing which cards belong to what set, we can draw colored boxes around the cards to indicate which are sets. The results:
+Knowing which cards belong to what set, we can [draw colored boxes](https://github.com/nicolashahn/set-solver/blob/9c9cab40bbf3608cad13a990e3ebbc40a6337355/SetGame.py#L85){:target="_blank"} around the cards to indicate which are sets. The results:
 
 ![set game]({{site.url}}/images/set-solver/solved11_small.jpg?style=centered)
 
@@ -108,10 +111,10 @@ And we're done!
 
 ## Where to go from here
 
-So far, I've thought about two methods of extending the project, both involve augmented reality.
+You can view the project source [on Github.](https://github.com/nicolashahn/set-solver){:target="_blank"}
 
-My original plan was to have it run on a phone as an AR app - this would probably require a rewrite in something other than python, as well as optimizations so that it can update in real time (it takes about 5 seconds to generate the above image on my early-2016 15" Macbook Pro).
+I've thought about two methods of extending the project. My original plan was to have it run on a phone as an AR app - this would probably require a rewrite in something other than python, as well as optimizations so that it can update in real time (it takes about 5 seconds to generate the above image on my early-2016 15" Macbook Pro).
 
 Another idea that was presented to me: play against the computer using a projector and webcam mounted on the ceiling pointing at a table (which the Recurse Center has). The projector could display just the colored borders around cards on the table. Difficulty could be set by how long the computer would wait before showing a set.
 
-Special thanks to my friend [Okay](https://github.com/okayzed) for encouragement, guidance, and contribution!
+Special thanks to my friend [Okay](https://github.com/okayzed){:target="_blank"} for encouragement, guidance, and contribution!
