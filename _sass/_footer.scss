@@ -17,3 +17,15 @@ footer {
   padding: $footer-padding;
   text-align: center;
 }
+
+.fdown-link{
+  display: inline-block;
+}
+
+.fdown-block {
+  margin: auto;
+  margin-top: 10px;
+  width: 5px;
+  height: 5px;
+  background-color: #FF004D;
+}
