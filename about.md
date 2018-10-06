@@ -5,10 +5,14 @@ permalink: /about/
 
 <img class="avatar-image" src="{{ site.url }}/images/avatar.jpg">
 
-**Nicolas Hahn** has been an artist, photographer, animator, designer, NLP researcher, infrastructure engineer, and web developer.
-He is now attending [the Recurse Center](https://recurse.com) in New York City.
-Afterwards, he may travel and do freelance work (you may want to [hire him](mailto:nicolas@stonespring.org)).
-He finds it strange to write about himself in the third person.
-You can find out more about what he's done in the links below. 
+**Nicolas Hahn** has been an artist, photographer, animator, designer, NLP
+researcher, infrastructure engineer, web developer, and a
+[Recurser.](https://recurse.com) He currently lives in Brooklyn, NY.  You can
+find out more about what he's done in the links below. 
 
-[Email](mailto:nicolas@stonespring.org) / [Resume]({{ site.url }}/files/NicolasHahnResume.pdf) / [Github](https://github.com/nicolashahn) / [LinkedIn](https://www.linkedin.com/in/nicolasbhahn) / [Flickr](https://www.flickr.com/photos/hahncholo) / [Instagram](https://www.instagram.com/hahncholo/)
+[Email](mailto:nicolas@stonespring.org) /
+[Resume]({{site.url}}/files/NicolasHahnResume.pdf) /
+[Github](https://github.com/nicolashahn) /
+[LinkedIn](https://www.linkedin.com/in/nicolasbhahn) /
+[Flickr](https://www.flickr.com/photos/hahncholo) /
+[Instagram](https://www.instagram.com/hahncholo/)
