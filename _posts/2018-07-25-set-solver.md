@@ -113,7 +113,7 @@ And we're done!
 
 You can view the project source [on Github.](https://github.com/nicolashahn/set-solver){:target="_blank"}
 
-I've thought about two methods of extending the project. My original plan was to have it run on a phone as an AR app - this would probably require a rewrite in something other than python, as well as optimizations so that it can update in real time (it takes about 5 seconds to generate the above image on my early-2016 15" Macbook Pro).
+I've thought about two methods of extending the project. My original plan was to have it run on a phone as an AR app - this would probably require a rewrite in something other than python, as well as optimizations so that it can update in real time (it takes about 5 seconds to generate the above image on my mid-2015 15" Macbook Pro).
 
 Another idea that was presented to me: play against the computer using a projector and webcam mounted on the ceiling pointing at a table (which the Recurse Center has). The projector could display just the colored borders around cards on the table. Difficulty could be set by how long the computer would wait before showing a set.
 
