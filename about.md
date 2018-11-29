@@ -7,8 +7,10 @@ permalink: /about/
 
 **Nicolas Hahn** has been an artist, photographer, animator, designer, NLP
 researcher, infrastructure engineer, web developer, and a
-[Recurser.](https://recurse.com) He currently lives in Brooklyn, NY.  You can
-find out more about what he's done in the links below. 
+[Recurser.](https://recurse.com) He currently lives in Brooklyn, NY.
+He currently works for [Percolate](https://percolate.com) as a backend engineer,
+working mainly in Python and Go.
+You can find out more about what he's done in the links below. 
 
 [Email](mailto:nicolas@stonespring.org) /
 [Resume]({{site.url}}/files/NicolasHahnResume.pdf) /
