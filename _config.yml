@@ -4,7 +4,7 @@ email:       nicolas@stonespring.org
 author:      Nicolas Hahn
 description: ""
 baseurl:     ""
-url:         "https://nicolas-hahn.com"
+url:         "nicolas-hahn.com"
 
 # Google analytics
 google_analytics: UA-119592833-1
