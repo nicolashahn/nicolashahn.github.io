@@ -7,6 +7,5 @@ _config.gh-pages.yml
 
 # Vim swap files.
 *.sw*
-Gemfile
 Gemfile.lock
 .jekyll-metadata
