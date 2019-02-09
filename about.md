@@ -3,7 +3,7 @@ layout: page
 permalink: /about/
 ---
 
-<img class="avatar-image" src="{{ site.url }}/images/avatar.jpg">
+<img class="avatar-image" src="/images/avatar.jpg">
 
 **Nicolas Hahn** has been an artist, photographer, animator, designer, NLP
 researcher, infrastructure engineer, web developer, and a
@@ -13,7 +13,7 @@ working mainly in Python and Go.
 You can find out more about what he's done in the links below. 
 
 [Email](mailto:nicolas@stonespring.org) /
-[Resume]({{site.url}}/files/NicolasHahnResume.pdf) /
+[Resume](/files/NicolasHahnResume.pdf) /
 [Github](https://github.com/nicolashahn) /
 [LinkedIn](https://www.linkedin.com/in/nicolasbhahn) /
 [Flickr](https://www.flickr.com/photos/hahncholo) /
