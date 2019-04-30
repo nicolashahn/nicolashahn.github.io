@@ -41,7 +41,12 @@ experience:
 
 ### Go and Python
 
-- __Standard Library__: Go comes with a decent `image` standard library module, as well
+(Again, for comparison:
+[diffimg](https://github.com/nicolashahn/diffimg) (python) and
+[diffimg-go](https://github.com/nicolashahn/diffimg-go))
+
+- __Standard Library__: Go comes with a decent `image` standard library module,
+- as well
   as a command line argument parsing library. I didn't feel that I had to look for any
   external dependencies, and I ended up not needing them - the `diffimg-go`
   implementation has none, where the Python implementation uses the (ironically) fairly
@@ -88,14 +93,16 @@ experience:
     tuples: `value, error` from functions wherever something may go wrong. I personally
     prefer Python's exceptions, because it lets you catch errors at any point in the
     call stack as opposed to manually forcing you to pass them back up over and over
-    again. This again results in brevity and cleaner looking code, though you do need to
-    be aware of what possible exceptions can be thrown by a function and all of its
-    internal calls. Good docstrings and tests can help a lot here, which you should be
-    writing anyways.
+    again. This again results in brevity and code that isn't littered with `if
+    err != nil`s, though you do need to be aware of what possible exceptions
+    can be thrown by a function and all of its internal calls. Good docstrings
+    and tests can help a lot here, which you should be writing anyways.
 - __Optional Arguments__: Go has none, Python makes extensive use of them. A seemingly
     small feature, but found it was something I really missed, mainly for how much
     easier refactoring is if you can just throw a `kwarg` onto whatever function needs
-    it without having to rewrite every one of its calls.
+    it without having to rewrite every one of its calls. This made my
+    implementation for how to handle whether or not the diff image should be
+    created somewhat clumsy.
 - __Asynchronicity__: Goroutines are a very convenient way to fire off asynchronous
     tasks. Before `async/await`, Python's multithreading solutions were somewhat hairy.
     Unfortunately I haven't written much asynchronous code and the simplicity of
@@ -105,3 +112,21 @@ experience:
     still has the upper hand here as goroutines can make use of full multiprocessor
     parallelism, where Python's basic `async/await` is still stuck on one processor, so
     mainly useful for I/O bound tasks.
+
+At a high level, my experience with Go (from both writing `diffimg-go` and my
+professional work) is that it's a more "serious business" programming language
+than Python is. Due to the fact that the language is small and there aren't
+many ways to write the same thing, code ends up looking more uniform throughout
+a codebase. Combine this with the static type system, and it really does make
+for a language that can comfortably scale to a huge codebase, and developers
+coming from a variety of other languages can quickly begin contributing
+idiomatic and understandable code. If I had to say what Go would be able to
+replace, it'd probably be Java, not Python. 
+
+However, because its ability to abstract is fairly limited, it's as _fun_ a
+language as Python is. In Python, there's several ways to do anything, and it
+won't complain if you want to do something that may be ill advised. Since the
+language has more features and is dynamically typed, writing code is also much
+faster. Because of this, Python may be the ultimate prototype languages, but
+it's also been proven to scale to support enormous applications such as
+Dropbox.
