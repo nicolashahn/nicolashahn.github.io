@@ -9,9 +9,10 @@ published:  false
 
 ![python, go, rust logos](/images/program-in-python-go-rust/python-go-rust.png)
 
-_Disclaimer: This is a very unscientific comparison, more of a rambling recount of a
-Python native rewriting a program as a way to learn two compiled, statically typed
-languages and a high level comparison of the three._
+_Disclaimer: This is a very unscientific comparison, more of a rambling recount
+of an intermediate-level Python native rewriting a program as a way to learn
+two compiled, statically typed languages and a high level comparison of the
+three from a primarily ergonomics-based perspective._
 
 A few years ago, I was tasked with rewriting an image processing service so we could
 host it in AWS Lambda. To tell whether my new service was creating the same output as
@@ -37,37 +38,39 @@ A few months ago, I joined a company that had several services written in Go, an
 to get up to speed quickly on the language. Writing
 [diffimg-go](https://github.com/nicolashahn/diffimg-go) seemed like an fun and possibly
 even useful way to do this. Here are a few points of interest that came out of the
-experience:
+experience (and also from using it in a professional environment):
 
 ### Go and Python
 
 (Again, for comparison:
-[diffimg](https://github.com/nicolashahn/diffimg) (python) and
+[diffimg (python)](https://github.com/nicolashahn/diffimg) and
 [diffimg-go](https://github.com/nicolashahn/diffimg-go))
 
 - __Standard Library__: Go comes with a decent `image` standard library module,
-- as well
-  as a command line argument parsing library. I didn't feel that I had to look for any
-  external dependencies, and I ended up not needing them - the `diffimg-go`
-  implementation has none, where the Python implementation uses the (ironically) fairly
-  heavy Pillow. I think Go's standard library in general is more structured and well
-  thought out, Python's feels as if it were organically evolved, created by many authors
-  over years, with many differing conventions. It's easier to predict how a Go standard
+  as well as a command line argument parsing library. I didn't feel that I had
+  to look for any external dependencies, and I ended up not needing them - the
+  `diffimg-go` implementation has none, where the Python implementation uses
+  the fairly heavy third party module (ironically) named Pillow. I think Go's
+  standard library in general is more structured and well thought out, Python's
+  feels as if it were organically evolved, created by many authors over years,
+  with many differing conventions. It's easier to predict how a Go standard
   library module will function.
-- __Static Type System__: Using one was fairly foreign to me, almost all my programming
-  for the past few years has been in Python. The experience was somewhat annoying at
-  first, it felt as though it was simply slowing me down and forcing me to be
-  excessively explicit whereas Python would just let me do what I wanted, even if I got
-  it wrong occasionally.  Somewhat like giving instructions to someone who always stops
-  you to ask you to clarify what you mean, versus someone who always nods along and
-  seems to understand you, though you're not always sure they're absorbing everything.
-- __Verbosity__: Go is much more verbose. Part of that is the type system, but mainly
-  the fact that the language itself is very small and not overloaded with features (you
-  only get [one looping construct!](https://tour.golang.org/flowcontrol/1) I missed
-  having list comprehensions), not that Python is. You can go through the [Tour of
-  Go](https://tour.golang.org/welcome/1) in a day or two, and you'll have been exposed
-  to the entirety of the language. How I felt at the end of it:
-
+- __Static Type System__: Using one was somewhat foreign to me, as almost all
+  my programming for the past few years has been in Python. The experience was
+  somewhat annoying at first, it felt as though it was simply slowing me down
+  and forcing me to be excessively explicit whereas Python would just let me do
+  what I wanted, even if I got it wrong occasionally.  Somewhat like giving
+  instructions to someone who always stops you to ask you to clarify what you
+  mean, versus someone who always nods along and seems to understand you,
+  though you're not always sure they're absorbing everything.
+- __Verbosity__: Go is much more verbose (though not Java verbose). Part of
+  that is the type system, but mainly the fact that the language itself is very
+  small and not overloaded with features (you only get [one looping
+  construct!](https://tour.golang.org/flowcontrol/1) I missed having list
+  comprehensions and other FP features), not that Python is. You can go through
+  the [Tour of Go](https://tour.golang.org/welcome/1) in a day or two, and
+  you'll have been exposed to the entirety of the language. How I felt at the
+  end of it:
   ![travolta_meme.gif](/images/travolta_meme.gif?style=centered)
 
 - __Interfaces and Structs__: Go uses interfaces and structs where Python would use
@@ -88,15 +91,18 @@ experience:
     when you try to access a method or attribute that may not exist. Forcing you to
     write implementations for specific types is a requirement for this. You can be much
     more sure of your Go code when it compiles. There are more chances to make mistakes,
-    but more help in catching them.
+    but more help in catching them. Python linters can get some of this
+    functionality, but because of the language's dynamicity, it's not foolproof
+    like Go is.
 - __Error Handling__: Python has exceptions, whereas Go propagates errors by returning
     tuples: `value, error` from functions wherever something may go wrong. I personally
     prefer Python's exceptions, because it lets you catch errors at any point in the
     call stack as opposed to manually forcing you to pass them back up over and over
     again. This again results in brevity and code that isn't littered with `if
     err != nil`s, though you do need to be aware of what possible exceptions
-    can be thrown by a function and all of its internal calls. Good docstrings
-    and tests can help a lot here, which you should be writing anyways.
+    can be thrown by a function and all(!) of its internal calls (using `except
+    Exception:` is a bad-practice workaround for this). Good docstrings and
+    tests can help a lot here, which you should be writing in either language.
 - __Optional Arguments__: Go has none, Python makes extensive use of them. A seemingly
     small feature, but found it was something I really missed, mainly for how much
     easier refactoring is if you can just throw a `kwarg` onto whatever function needs
@@ -104,7 +110,7 @@ experience:
     implementation for how to handle whether or not the diff image should be
     created somewhat clumsy.
 - __Asynchronicity__: Goroutines are a very convenient way to fire off asynchronous
-    tasks. Before `async/await`, Python's multithreading solutions were somewhat hairy.
+    tasks. Before `async/await`, Python's asynchronous solutions were somewhat hairy.
     Unfortunately I haven't written much asynchronous code and the simplicity of
     `diffimg` didn't seem to lend itself to the added overhead of asynchronicity, so I
     don't have too much to say here, but I thought I'd mention it since it's a very
@@ -121,12 +127,15 @@ a codebase. Combine this with the static type system, and it really does make
 for a language that can comfortably scale to a huge codebase, and developers
 coming from a variety of other languages can quickly begin contributing
 idiomatic and understandable code. If I had to say what Go would be able to
-replace, it'd probably be Java, not Python. 
+replace, it'd probably be Java, not Python. It's a language that can scale to
+"enterprise software"-sized codebases, but without a lot of the boilerplate (or
+features) Java has.
 
-However, because its ability to abstract is fairly limited, it's as _fun_ a
-language as Python is. In Python, there's several ways to do anything, and it
-won't complain if you want to do something that may be ill advised. Since the
-language has more features and is dynamically typed, writing code is also much
-faster. Because of this, Python may be the ultimate prototype languages, but
-it's also been proven to scale to support enormous applications such as
-Dropbox.
+However, because its ability to abstract is fairly limited, it's not as _fun_ a
+language as Python is. In Python, there's several ways to do anything which
+allows for more "clever" solutions, and it won't complain if you want to do
+something that may be ill advised. Since the language has more features and is
+dynamically typed, writing code can be somewhat faster. Because of this, Python
+may be the ultimate prototype language, but it's also been proven to scale to
+support enormous applications such as Dropbox, though it can never reach the
+performance of Go.
