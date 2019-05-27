@@ -11,9 +11,13 @@ published:  false
 
 ![Python, Go, Rust logos](/images/program-in-python-go-rust/python-go-rust.png)
 
-_Disclaimer: This is a primarily subjective developer-ergonomics based comparison of the
-three languages from the perspective of a Python developer, but you can [skip to
-performance comparison](#performance) if you want something less fluffy._
+_This is a subjective, primarily developer-ergonomics-based comparison of the
+three languages from the perspective of a Python web developer, but you can [skip to
+performance comparison](#performance) if you want some hard numbers, [the
+takeaway](#takeaway) if you just want a quick summary, or go straight to the
+[Python](https://github.com/nicolashahn/diffimg),
+[Go](https://github.com/nicolashahn/diffimg-go), and
+[Rust](https://github.com/nicolashahn/diffimg-rs) implementations._
 
 A few years ago, I was tasked with rewriting an image processing service so we could
 host it in AWS Lambda. To tell whether my new service was creating the same output as
@@ -21,25 +25,25 @@ the old given an image and one or more transforms (resize to X by Y, make a circ
 crop, etc.), I had to inspect the images myself. Clearly I needed to automate this, but
 I could find no existing Python library that simply told me how different two images
 were on a per-pixel basis.  Hence [diffimg](https://github.com/nicolashahn/diffimg),
-which can give you a difference ratio/percentage, or generate a diff image.
+which can give you a difference ratio/percentage, or generate a diff image (check out
+the readme to see an example).
 
-The initial implementation was in Python (by far the language I'm most comfortable in),
-and all the heavy lifting was done by
+The initial implementation was in Python (the language I'm most comfortable in), with
+the heavy lifting was done by
 [Pillow](https://pillow.readthedocs.io/en/stable/). It's usable as a library or a
 command line tool. The actual
 [meat](https://github.com/nicolashahn/diffimg/blob/master/diffimg/diff.py) of the
 program is very small, only a few dozen lines.  This is due to making use of Pillow's
 `ImageChops.difference()` function, which generates the diff image - the ratio
-calculation is only a few more lines. All in all, I did very little work to create this
-tool ([XKCD](https://xkcd.com/353/) was right, there's a Python module for nearly
+calculation is only a few more lines. Not a lot of effort went into building this tool
+([XKCD](https://xkcd.com/353/) was right, there's a Python module for nearly
 everything), but it's been very handy to many people.
-
 
 A few months ago, I joined a company that had several services written in Go, and I need
 to get up to speed quickly on the language. Writing
 [diffimg-go](https://github.com/nicolashahn/diffimg-go) seemed like an fun and possibly
 even useful way to do this. Here are a few points of interest that came out of the
-experience (and also from using it in a professional environment):
+experience, along with some that came up while using it at work: 
 
 ## Go and Python
 
@@ -55,13 +59,17 @@ experience (and also from using it in a professional environment):
   library in general is more structured and well thought out, Python's feels as if it
   were organically evolved, created by many authors over years, with many differing
   conventions. The Go standard library's consistency makes it easier to predict how any
-  given module will function, and the source is extremely well documented. 
+  given module will function, and the source code is extremely well documented. 
   - One downside of using the standard image library is that it does not automatically
     detect if the image has an alpha channel, pixel values have four channels (RGBA) for
     all image types.  The `diffimg-go` implementation therefore requires the user to
     indicate whether or not they want to use the alpha channel for the calculation/image
     generation. This small inconvenience wasn't worth finding a third party library to
     fix, in my opinion.
+  - One big upside is that there's enough in the standard library that you don't need a
+    web framework like Django. You can build out a real, usable API without any
+    dependencies. Python's claim in the past has been that it's batteries-included, but
+    Go does it better, in my opinion.
 
 - __Static Type System__: Using one was somewhat foreign to me, as almost all
   my programming for the past few years has been in Python. The experience was somewhat
@@ -70,7 +78,8 @@ experience (and also from using it in a professional environment):
   got it wrong occasionally.  Somewhat like giving instructions to someone who always
   stops you to ask you to clarify what you mean, versus someone who always nods along
   and seems to understand you, though you're not always sure they're absorbing
-  everything.
+  everything. It can help decrease a certain class of bugs but the presence of a static
+  type system does not mean you don't need to write tests.
 
 - __Verbosity__: Go is much more verbose (though not Java verbose). Part of that is the
   type system, but mainly the fact that the language itself is very small and not
@@ -120,8 +129,8 @@ experience (and also from using it in a professional environment):
   small feature, but found it was something I really missed, mainly for how much
   easier refactoring is if you can just throw a `kwarg` onto whatever function needs
   it without having to rewrite every one of its calls. This made my implementation for
-  how to handle whether or not the diff image should be created based on the flags
-  somewhat clumsy.
+  how to handle whether or not the diff image should be created based on the command
+  line flags somewhat clumsy.
 
 - __Third Party Modules__: Prior to [Go modules](https://blog.golang.org/modules2019),
   Go's package manager would just throw all downloaded packages into `$GOPATH/src`
@@ -141,6 +150,11 @@ experience (and also from using it in a professional environment):
   still has the upper hand here as goroutines can make use of full multiprocessor
   parallelism, where Python's basic `async/await` is still stuck on one processor, so
   mainly useful for I/O bound tasks.
+
+- __Debugging__: Python wins. `pdb` (and more sophisticated options are available) is
+  extremely flexible, once you've entered the REPL, you're able to write whatever code
+  you want. [Delve](https://github.com/go-delve/delve) is a good debugger, but it's not
+  the same as dropping straight into an interpreter.
 
 ### Go summary
 
@@ -162,9 +176,13 @@ complain if you want to do something that may be ill-advised. Since the language
 more features and is dynamically typed, writing code can be significantly faster.
 Because of this, Python is an excellent prototyping language, but it's also been proven
 to scale to support enormous applications such as Dropbox (with the help of optional
-static typing through [mypy](http://mypy-lang.org/)).  It will almost never be as
-performant as Go - though if most of the work in your Python code [is being done by
-C](https://docs.python.org/3/extending/building.html), this may not be the case.
+static typing through [mypy](http://mypy-lang.org/)) and Youtube.  It will almost never
+be as performant as Go - though if most of the work in your Python code [is being done
+by C](https://docs.python.org/3/extending/building.html), this may not be the case.
+
+While I can definitely recommend Go for build a large, scalable, robust system with many
+developers from many backgrounds, I have little desire to use it for my personal
+projects.  It doesn't spark joy for me the way Python does.
 
 ## Enter Rust
 
@@ -246,23 +264,33 @@ I definitely wouldn't recommend attempting to write Rust without at least
 going through the first few chapters of the book, even if you're already familiar with C
 and memory management. With Go and Python, as long as you have some experience with
 another modern imperative programming language, they're not difficult to just start
-writing, referring to the docs when necessary.
+writing, referring to the docs when necessary. Rust is a large language.  Python also
+has a lot of features, but they're mostly opt-in. You can get a lot done just by
+understanding a few primitive data structures and some builtin functions. With Rust, you
+really need to understand the complexity inherent to the type system and borrow checker,
+or you're going to be getting tangled up a lot.
 
-# TODO finish the rust summary
+As far as how I feel when I write the language, it's a lot of fun, like Python. It's
+very expressive and while the compiler stops you a lot, it's also very helpful, and its
+suggestions on how to solve your borrowing/typing problems usually work. The tooling as
+I've mentioned is the best I've encountered for any language and doesn't bring me a lot
+of headaches like some other languages I've used. I really like using the language and
+will continue to look for opportunities to do so, where the performance of Python isn't
+good enough.
 
 ## [Performance](#performance)
 
 Now for something resembling an objective comparison. I first generated three sets of
-random images: 1x1, 2000x2000, and 10000x10000 (fun fact: for the difference ratio
+random images: 1x1, 2000x2000, and 10,000x10,000 (fun fact: for the difference ratio
 calculation, a `u32` can only hold the sum of the maximum channel values of a square RGB
 image with a width/height of 2369px, while a `u64` can do the same with a square image
-of size 155284870px). Then I measured each language+image size combination's performance
+of size 155,284,870px). Then I measured each language+image size combination's performance
 10 times for each `diffimg` ratio calculation using the averaged values given by the
 `time` command (the `real` measurement). `diffimg-rs` was built using `--release`,
 `diffimg-go` with just `go build`, and the Python `diffimg` invoked with `python3 -m
 diffimg`. The results, on a 2015 Macbook Pro:
 
-| Image size: | 1x1             | 2000x2000          | 10000x10000        |
+| Image size: | 1x1             | 2000x2000          | 10,000x10,000        |
 |-------------|-----------------|--------------------|--------------------|
 | Rust        | 0.001s          | 0.490s             | 5.871s             |
 | Go          | 0.002s __(2x)__ | 0.756s __(1.54x)__ | 14.060s __(2.39x)__|
@@ -280,7 +308,7 @@ is one of its steps, and even just `time python -c ''` takes 0.030s.
 
 At 2000x2000, the gap narrows for both Go and Python compared to Rust, presumably
 because less of the overall time is spent in setup compared to calculation. However,
-at 10000x10000, Rust is more performant in comparison, which I would expect is due to
+at 10,000x10,000, Rust is more performant in comparison, which I would expect is due to
 its compiler's optimizations producing the smallest block of machine code that is looped
 through 100,000,000 times, combined with never needing to pause for garbage collection.
 
@@ -288,10 +316,59 @@ The Python implementation definitely has room for improvement, because as effici
 Pillow is, we're still creating a diff image in memory (traversing both input images)
 and then adding up each of its pixel's channel values. Effectively, we're looping over
 three images instead of two like the Rust and Go implementations, so I would expect a
-more direct implemention would cut its run time by roughly a third.
+similar but more direct approach would cut its run time by roughly a third. A pure
+Python implementation would also be wildly slower though, since Pillow does its main
+work in C. Because the other two are pure language implementations, this isn't really a
+fair comparison, though in some ways it is, because Python has an absurd amount of
+libraries available that are performant due to C extensions.
 
-I should also mention the binary sizes: Rust is 2.1mb with the `--release` build, and Go
-is comparable at 2.5mb. Python doesn't create binaries. Its source code is only about
-3kb, but including the Pillow dependency, everything weighs in at 24mb(!).
+I should also mention the binary sizes: Rust's is 2.1mb with the `--release` build, and
+Go's is comparable at 2.5mb. Python doesn't create binaries, but `.pyc` files are
+somewhat comparable, and `diffimg`'s `.pyc` files are about 3kb in total. Its source
+code is also only about 3kb, but including the Pillow dependency, it weighs in at
+24mb(!).
 
-# TODO final conclusion
+## [The takeaway](#takeaway)
+
+Obviously, these are three very different languages fulfilling different niches. I've
+heard Go and Rust often mentioned together, but I think Go and Python are the two more
+similar languages. They're both good for writing server-side application logic (what I
+spend most of my time doing at work). Comparing just native code performance, Go blows
+Python away, but many of Python's libraries are wrappers around fast C implementations -
+it's more complicated than the naive comparison. Writing a C extension for Python
+doesn't really count as Python anymore, but the option is open to you.
+
+For your backend server needs, Python has proven itself to be "fast enough" for
+most applications, though if you need more performance, Go has it. Rust even more so,
+but I think you pay for it with development time. Go is not far off from Python in this
+regard, though it certainly is slower to develop, primarily due to its small feature
+set. Rust is very fully featured, but managing memory will always take more time than
+having the language do it, and I think this outweighs having to deal with Go's
+minimality.
+
+It should also be mentioned that there are many, many Python developers in the world,
+some with literally decades of experience. It will likely never be hard to find more
+people (that can immediately contribute) to add to your backend team if you choose
+Python. However, Go developers are not particularly rare, and can easily be created
+because the language is so easy to learn. Rust developers are both rarer and harder to
+make since the language takes longer to internalize.
+
+With respect to the type systems: static type systems make it easier to write more
+correct code, but it's not a panacea.  You still need to write comprehensive tests no
+matter the language you use.  It requires a bit more discipline, but I've found that the
+code I write in Python is not necessarily more error prone than Go or Rust as long as
+I'm able to write a good suite of tests.
+
+To summarize their use cases:
+
+- Use Python if you need only an average level of performance and value speed of
+  development above all else.
+
+- Use Go if you want to build a robust, performant application with fewer dependencies
+  that's easily maintainable, and don't mind having only a basic feature set.
+
+- Use Rust if you're building something where performance is paramount, and you're not
+  pressed for time.
+
+They're very different languages and it feels a little bit wrong to try to compare them
+like this, but hopefully my perspective has been useful to you.
