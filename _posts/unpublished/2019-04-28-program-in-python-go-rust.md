@@ -103,19 +103,26 @@ experience, along with some that came up while using it at work:
   that defines behavior versus a type that holds information.  Python and any other OO
   language would encourage you to mash these together, but there are pros and cons to
   both paradigms:
+  - Go heavily encourages [composition over
+    inheritance](https://en.wikipedia.org/wiki/Composition_over_inheritance). While it
+    has [inheritance via embedding](https://golang.org/doc/effective_go.html#embedding),
+    without classes, it's not easy to forward both data and methods. I generally agree
+    that composition is the better default pattern to reach for, but I'm not an
+    absolutist and some solutions are a better fit for inheritance, so I'd prefer not to
+    have the language make this decision for me. I assume once you're more comfortable
+    with the pattern, it's not an issue anymore, and coming up with composition-only
+    code is second nature.
   - Divorcing implementations for interfaces means you need to write similar code
-    several times if you have many types that are similar to each other. This is seems
-    to me a "bottom-up" approach to writing abstractions, whereas Python would be
-    "top-down". This style is still new to me, so I'm still undecided as to whether this
-    is a pattern I like - it does seem to require more code, which I'm initially put off
-    by.
+    several times if you have many types that are similar to each other. Because of the
+    lack of generic types, there are situations in Go where I wouldn't be able to reuse
+    code, though I would in Python.
   - However, because Go is statically typed, the compiler/linter will tell you when
     you're writing code that would have caused a runtime error in Python when you try to
     access a method or attribute that may not exist. Forcing you to write
-    implementations for specific types is a requirement for this. You can be much more
-    sure of your Go code when it compiles. There are more chances to make mistakes, but
-    more help in catching them. Python linters can get some of this functionality, but
-    because of the language's dynamicity, it's not foolproof like Go is.
+    implementations for specific types is a requirement for this. Go that compiles is
+    more trustworthy than Python that runs. Python linters can get some of this
+    functionality, but because of the language's dynamicity, it's not nearly as good as
+    Go's.
 
 - __Error Handling__: Python has exceptions, whereas Go propagates errors by returning
   tuples: `value, error` from functions wherever something may go wrong. Python lets
