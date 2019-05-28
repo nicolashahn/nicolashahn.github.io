@@ -12,7 +12,7 @@ published:  false
 ![Python, Go, Rust logos](/images/program-in-python-go-rust/python-go-rust.png)
 
 _This is a subjective, primarily developer-ergonomics-based comparison of the
-three languages from the perspective of a Python web developer, but you can [skip to
+three languages from the perspective of a Python developer, but you can [skip to
 performance comparison](#performance) if you want some hard numbers, [the
 takeaway](#takeaway) if you just want a quick summary, or go straight to the
 [Python](https://github.com/nicolashahn/diffimg),
@@ -36,7 +36,7 @@ command line tool. The actual
 program is very small, only a few dozen lines.  This is due to making use of Pillow's
 `ImageChops.difference()` function, which generates the diff image - the ratio
 calculation is only a few more lines. Not a lot of effort went into building this tool
-([XKCD](https://xkcd.com/353/) was right, there's a Python module for nearly
+([xkcd was right](https://xkcd.com/353/), there's a Python module for nearly
 everything), but it's been very handy to many people.
 
 A few months ago, I joined a company that had several services written in Go, and I need
@@ -45,10 +45,9 @@ to get up to speed quickly on the language. Writing
 even useful way to do this. Here are a few points of interest that came out of the
 experience, along with some that came up while using it at work: 
 
-## Go and Python
+## Comparing Python and Go
 
-(Again, for comparison:
-[diffimg](https://github.com/nicolashahn/diffimg) (python) and
+(Again, the code: [diffimg](https://github.com/nicolashahn/diffimg) (python) and
 [diffimg-go](https://github.com/nicolashahn/diffimg-go))
 
 - __Standard Library__: Go comes with a decent [image](https://golang.org/pkg/image/)
@@ -80,10 +79,15 @@ experience, along with some that came up while using it at work:
   and seems to understand you, though you're not always sure they're absorbing
   everything. It can help decrease a certain class of bugs but the presence of a static
   type system does not mean you don't need to write tests.
+  - One of the common complaints of Go is that it does not have user-implementable
+    generic types. While this is not a must-have feature for building a large,
+    extensible application, it certainly slows development speed.
+    [Alternatives](https://appliedgo.net/generics/) have been suggested, but none of
+    them are as satisfying or effective as having real generic types.
 
-- __Verbosity__: Go is much more verbose (though not Java verbose). Part of that is the
-  type system, but mainly the fact that the language itself is very small and not
-  overloaded with features (you only get [one looping
+- __Verbosity__: Go is much more verbose (though not Java verbose). Part of that is
+  because type system does not have generics, but mainly the fact that the language
+  itself is very small and not overloaded with features (you only get [one looping
   construct!](https://tour.golang.org/flowcontrol/1) I missed having list comprehensions
   and other functional programming features), not that Python is. If you're comfortable
   with Python, you can go through the [Tour of Go](https://tour.golang.org/welcome/1) in
@@ -151,10 +155,11 @@ experience, along with some that came up while using it at work:
   parallelism, where Python's basic `async/await` is still stuck on one processor, so
   mainly useful for I/O bound tasks.
 
-- __Debugging__: Python wins. `pdb` (and more sophisticated options are available) is
-  extremely flexible, once you've entered the REPL, you're able to write whatever code
-  you want. [Delve](https://github.com/go-delve/delve) is a good debugger, but it's not
-  the same as dropping straight into an interpreter.
+- __Debugging__: Python wins. `pdb` (and more sophisticated options like
+  [ipdb](https://pypi.org/project/ipdb/) are available) is extremely flexible, once
+  you've entered the REPL, you're able to write whatever code you want.
+  [Delve](https://github.com/go-delve/delve) is a good debugger, but it's not the same
+  as dropping straight into an interpreter.
 
 ### Go summary
 
@@ -170,15 +175,16 @@ replace, it'd probably be Java, not Python. It's a language that can gracefully 
 and the boilerplate that comes with it.
 
 However, because its ability to abstract is fairly limited, it's not as _fun_ a language
-as Python is. Go actively tries to stop you from being "clever." In Python, there's
-several ways to do anything which allows for more "clever" solutions, and it won't
-complain if you want to do something that may be ill-advised. Since the language has
-more features and is dynamically typed, writing code can be significantly faster.
-Because of this, Python is an excellent prototyping language, but it's also been proven
-to scale to support enormous applications such as Dropbox (with the help of optional
-static typing through [mypy](http://mypy-lang.org/)) and Youtube.  It will almost never
-be as performant as Go - though if most of the work in your Python code [is being done
-by C](https://docs.python.org/3/extending/building.html), this may not be the case.
+as Python is. Go actively tries to stop you from being "clever." I might even go as far
+as saying that Go's strength is that it's boring. In Python, there's several ways to do
+anything which allows for more "clever" solutions, and it won't complain if you want to
+do something that may be ill-advised. Since the language has more features and is
+dynamically typed, writing code can be significantly faster.  Because of this, Python is
+an excellent prototyping language, but it's also been proven to scale to support
+enormous applications such as Dropbox (with the help of optional static typing through
+[mypy](http://mypy-lang.org/)) and Youtube.  It will almost never be as performant as
+Go, though if most of the work in your Python code [is being done by
+C](https://docs.python.org/3/extending/building.html), things get more complicated.
 
 While I can definitely recommend Go for build a large, scalable, robust system with many
 developers from many backgrounds, I have little desire to use it for my personal
@@ -206,21 +212,22 @@ Some of the things that I took notice of when writing
 [diffimg-rs](https://github.com/nicolashahn/diffimg-rs):
 
 - __Type System__: I was comfortable with the more basic static type system of Go by
-  now, but Rust's is significantly more powerful/complicated. Generic types, enumerated
-  types, traits, reference types, lifetimes are all additional concepts that I had to
-  learn on top of Go's much simpler interfaces and structs. Additionally, Rust uses its
-  type system to implement features that other languages don't use the type system for
-  (example: the [Result](https://doc.rust-lang.org/std/result/) type, which I'll talk
-  about soon).  Luckily, the compiler/linter is extremely helpful in telling you what
-  you're doing wrong, and often even tells you exactly how to fix it. I've spent
-  significantly more time than I did learning Go's type system and I'm still not
+  now, but Rust's is significantly more powerful and complicated. Generic types,
+  enumerated types, traits, reference types, lifetimes are all additional concepts that
+  I had to learn on top of Go's much simpler interfaces and structs. Additionally, Rust
+  uses its type system to implement features that other languages don't use the type
+  system for (example: the [Result](https://doc.rust-lang.org/std/result/) type, which
+  I'll talk about soon).  Luckily, the compiler/linter is extremely helpful in telling
+  you what you're doing wrong, and often even tells you exactly how to fix it. I've
+  spent significantly more time than I did learning Go's type system and I'm still not
   comfortable with all the features yet.
   - There was one place where because of the type system, the implementation of the
     imaging library I was using [would have led to an uncomfortable amount of code
     repetition.](https://github.com/nicolashahn/diffimg-rs/blob/e9dd3f0331b3e32d2f62241b4d576d1da3d3cd42/src/lib.rs#L105)
     I only ended up matching the two most important enum types, but matching the others
     would lead another half dozen or so lines of nearly identical code. This rubs me the
-    wrong way, and maybe it's a good candidate for using macros.
+    wrong way, and maybe it's a good candidate for using macros, which I still need to
+    experiment with.
 
 - __Manual Memory Management__: Python and Go pick up your trash for you. C lets you
   litter everywhere, but throws a fit when it steps on your banana peel. Rust slaps you
@@ -237,8 +244,14 @@ Some of the things that I took notice of when writing
 
 - __Error Handling__: Instead of the exception model that Python uses or the tuple
   returns that Go uses for error handling, Rust makes use of its enumerated types:
-  `Result` returns either `Ok(value)` or `Err(error)`. This is closer to Go's system,
-  but is a bit more explicit and leverages the type system.
+  `Result` returns either `Ok(value)` or `Err(error)`. This is closer to Go's way if you
+  squint, but is a bit more explicit and leverages the type system.
+
+- __Asynchronicity__: Async/await is already available to nightly Rust users, but the
+  final syntax has not been agreed on yet as of this writing. In practice, it works how
+  you'd expect it to if you've used async/await in other languages. Rust also has some
+  basic threading features in the standard library that seem a bit easier to use than
+  Python's, but I haven't spent much time with it.
 
 - __Tooling__: `rustup` and `cargo` are extremely polished implementations of a
   language version manager and package/module manager, respectively. Everything "just
@@ -280,15 +293,13 @@ good enough.
 
 ## [Performance](#performance)
 
-Now for something resembling an objective comparison. I first generated three sets of
-random images: 1x1, 2000x2000, and 10,000x10,000 (fun fact: for the difference ratio
-calculation, a `u32` can only hold the sum of the maximum channel values of a square RGB
-image with a width/height of 2369px, while a `u64` can do the same with a square image
-of size 155,284,870px). Then I measured each language+image size combination's performance
-10 times for each `diffimg` ratio calculation using the averaged values given by the
-`time` command (the `real` measurement). `diffimg-rs` was built using `--release`,
-`diffimg-go` with just `go build`, and the Python `diffimg` invoked with `python3 -m
-diffimg`. The results, on a 2015 Macbook Pro:
+Now for something resembling an objective comparison. I first generated three random
+images of different sizes: 1x1, 2000x2000, and 10,000x10,000. Then I measured each
+(language, image size) combination's performance 10 times for each `diffimg` ratio
+calculation and averaged them, using the values given by the `real` values from the
+`time` command. `diffimg-rs` was built using `--release`, `diffimg-go` with just `go
+build`, and the Python `diffimg` invoked with `python3 -m diffimg`. The results, on a
+2015 Macbook Pro:
 
 | Image size: | 1x1             | 2000x2000          | 10,000x10,000        |
 |-------------|-----------------|--------------------|--------------------|
@@ -296,15 +307,16 @@ diffimg`. The results, on a 2015 Macbook Pro:
 | Go          | 0.002s __(2x)__ | 0.756s __(1.54x)__ | 14.060s __(2.39x)__|
 | Python      | 0.095s __(95x)__| 1.419s __(2.90x)__ | 28.751s __(4.89x)__|
 
-I'm losing a lot of precision because `time` only goes down to 10ms resolution (slightly
-more is shown here because of the averaging). However, we can still learn something from
-this data.
+I'm losing a lot of precision because `time` only goes down to 10ms resolution (one more
+digit is shown here because of the averaging). However, we can still learn something
+from this data.
 
 With the 1x1 image, virtually all the time is spent in setup, not ratio calculation.
-Rust wins, despite me using a fairly full-featured command line argument parsing library
-[clap](https://github.com/clap-rs/clap) and Go only using the standard library. I'm not
-surprised Python's startup is as slow as it is, since importing a large library (Pillow)
-is one of its steps, and even just `time python -c ''` takes 0.030s.
+Rust wins, despite using two third-party libraries
+([clap](https://github.com/clap-rs/clap) and [image](https://github.com/image-rs/image))
+and Go only using the standard library. I'm not surprised Python's startup is as slow as
+it is, since importing a large library (Pillow) is one of its steps, and even just `time
+python -c ''` takes 0.030s.
 
 At 2000x2000, the gap narrows for both Go and Python compared to Rust, presumably
 because less of the overall time is spent in setup compared to calculation. However,
@@ -326,7 +338,8 @@ I should also mention the binary sizes: Rust's is 2.1mb with the `--release` bui
 Go's is comparable at 2.5mb. Python doesn't create binaries, but `.pyc` files are
 somewhat comparable, and `diffimg`'s `.pyc` files are about 3kb in total. Its source
 code is also only about 3kb, but including the Pillow dependency, it weighs in at
-24mb(!).
+24mb(!). Again, not a fair comparison because I'm using a third party imaging library,
+but it should be mentioned.
 
 ## [The takeaway](#takeaway)
 
@@ -357,18 +370,18 @@ With respect to the type systems: static type systems make it easier to write mo
 correct code, but it's not a panacea.  You still need to write comprehensive tests no
 matter the language you use.  It requires a bit more discipline, but I've found that the
 code I write in Python is not necessarily more error prone than Go or Rust as long as
-I'm able to write a good suite of tests.
+I'm able to write a good suite of tests. That said, I much prefer Rust's type system to
+Go's, for two reasons: it supports generics, and it leverages the type system for error
+handling and other language features.
 
-To summarize their use cases:
+In the end, this comparison is a bit silly, because though the use cases of these
+languages overlap, they occupy very different niches. Python is high on the
+development-speed, low on the performance scale, while Rust is the opposite, and Go is
+in the middle, though I enjoy writing Python and Rust more than Go ([this may be
+unsurprising](https://insights.stackoverflow.com/survey/2019#technology-_-most-loved-dreaded-and-wanted-languages)).
+I'll continue to use Go at work happily (along with Python) since it really is a great
+language for building stable and maintainable applications in a large team setting.
 
-- Use Python if you need only an average level of performance and value speed of
-  development above all else.
-
-- Use Go if you want to build a robust, performant application with fewer dependencies
-  that's easily maintainable, and don't mind having only a basic feature set.
-
-- Use Rust if you're building something where performance is paramount, and you're not
-  pressed for time.
-
-They're very different languages and it feels a little bit wrong to try to compare them
-like this, but hopefully my perspective has been useful to you.
+I'm pretty satisfied with the range of programming tasks that are covered by these three
+languages - there's virtually no project that one of them wouldn't be a great choice
+for.
