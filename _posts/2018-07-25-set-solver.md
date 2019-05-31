@@ -8,7 +8,7 @@ published:  true
 
 ---
 
-![set game]({{site.url}}/images/set-solver/solved12_small.jpg?style=centered)
+![set game](/images/set-solver/solved12_small.jpg?style=centered)
 *<center>Sets are indicated by cards that have the same outline color.</center>*
 
 [SET](https://puzzles.setgame.com/set/rules_set.htm){:target="_blank"} was a game I used to play with my family years ago, and I was reintroduced to it recently while attending the [Recurse Center](https://recurse.com){:target="_blank"}. I was looking for an excuse to play with OpenCV, and teaching a computer to play SET seemed like a good choice.
@@ -17,7 +17,7 @@ A quick primer on SET: each card has four attributes: shape, color, number, and 
 
 ## Extracting cards from the image
 
-![set game]({{site.url}}/images/set-solver/setgame11small.jpg?style=centered)
+![set game](/images/set-solver/setgame11small.jpg?style=centered)
 
 I decided the first step to this would be to identify each card in an image. Luckily, Arnab Nandi [had already solved that problem.](http://arnab.org/blog/so-i-suck-24-automating-card-games-using-opencv-and-python){:target="_blank"} So, my "game image -> individual cards" piece of the pipeline is more or less the same as his, with a few modifications.
 
@@ -27,7 +27,7 @@ Nandi’s method also assumes orientation of cards - I want my implementation to
 
 With these methods, my limited testing showed that if you’re careful about the lighting and angle, the program will reliably extract the individual cards from the image.
 
-![find the corners]({{site.url}}/images/set-solver/find_cards.jpg?style=centered)
+![find the corners](/images/set-solver/find_cards.jpg?style=centered)
 *<center>The contours are returned as sets of corner coordinates.</center>*
 
 
@@ -35,13 +35,13 @@ With these methods, my limited testing showed that if you’re careful about the
 
 In order to solve the image, we're going to need to know what cards are in it. I decided the first thing to do is to make a labeled dataset of all the cards in the deck. I wrote [a script](https://github.com/nicolashahn/set-solver/blob/94ef327185e8cf3e7a411cb3d4903908570131de/label_all_cards.py) to speed up the process of manually labeling cards. I laid all the cards out on a table, photographed them, and fed them to the script, which would use the method above to cut out the card images. It would then show me a card and prompt me to enter ‘1’, ‘2’, or ‘3’ for each attribute to indicate which category, and save the card with a filename that contains these attribute categories.
 
-![Labeling]({{site.url}}/images/set-solver/labeling.jpg?style=centered)
+![Labeling](/images/set-solver/labeling.jpg?style=centered)
 
 We now have individual images of all the cards in the deck, labeled. Great! Now, we need to classify the attributes of an unknown card. I prefer to use the simplest method that works, so let's try something easy: differentiate each card in a SET game against every image in our deck dataset. I used a small python library I wrote called [diffimg](https://github.com/nicolashahn/diffimg), which quantifies the difference in two images of the same size by comparing the RGB channel values for pixels at the same coordinates.
 
 As it turns out, this only sort of works: it can often get the correct shape and number, but not the shade and color. It often confuses red and purple, as well as striped and outlined shapes. As it turns out, when you do a per-pixel comparison, things like the lighting of the image and slight positional misalignment overwhelm the shape/color/shade/fill match.
 
-![diffimg]({{site.url}}/images/set-solver/diff_card.jpg?style=centered)
+![diffimg](/images/set-solver/diff_card.jpg?style=centered)
 
 *<center>Diff image made from two images of the same card. Brighter pixels are where the images differ. Slight misalignment as seen here can cause large diff scores.</center>*
 
@@ -51,11 +51,11 @@ Looks like we'll have to be a bit more sophisticated. I decided I would try to c
 
 An idea I had for this was to distill the average color of a card's shape(s) into one RGB value, and compare it against the averages of labeled cards. A friend showed me [an article](https://mzucker.github.io/2016/09/20/noteshrink.html){:target="_blank"} on [Noteshrink](https://github.com/mzucker/noteshrink){:target="_blank"} with code for doing exactly that. Broadly, the way it works is: given a number of colors `n`, reduce the bit depth of each pixel's color information until all the pixel's color values fit in `n` buckets. Doing so pushes hues that are close to each other in 3-dimensional RGB space towards a single value. So for example, using this image:
 
-![diffimg]({{site.url}}/images/set-solver/purple-triple-solid-diamond.jpg?style=centered)
+![diffimg](/images/set-solver/purple-triple-solid-diamond.jpg?style=centered)
 
 We set `n = 2` to condense all the different purple hues into one value:
 
-![diffimg]({{site.url}}/images/set-solver/noteshrink.png?style=centered)
+![diffimg](/images/set-solver/noteshrink.png?style=centered)
 *<center>The beige tone being replaced with white and the increase in purple saturation are artifacts of the original intention of Noteshrink.</center>*
 
 Once we have this image that has been reduced to a single color on a while background, we can take the RGB value of that single color and compare it to the averages of each of the red, green, and purple labeled cards (after they've been through the same bucketing process). This is [precomputed](https://github.com/nicolashahn/set-solver/blob/1333af1647dc168605d53b5437142f2c2566e9f5/avg_colors.py){:target="_blank"} to speed up classification. Simply finding the [minimum RGB distance](https://github.com/nicolashahn/set-solver/blob/60ca53521cefb2b95b3e71a70fe3aabe3ef81b12/classify_card.py#L95){:target="_blank"} is enough to get an accurate color classification.
@@ -64,20 +64,20 @@ Once we have this image that has been reduced to a single color on a while backg
 
 Classifying the number of the card [works very similarly](https://github.com/nicolashahn/set-solver/blob/50c20e7a88782b7e5f1b3e65ed5fa769b6379003/find_shapes.py){:target="_blank"} to the card extraction process. We again use `cv2.findContours()` to find the contours in the image, and count how many are over a certain minimum area value (to avoid things like reflections, stains, or specks of dust on the card). 
 
-![shape cutouts]({{site.url}}/images/set-solver/find_shapes.jpg?style=centered)
+![shape cutouts](/images/set-solver/find_shapes.jpg?style=centered)
 
 ## Shape & Fill
 
 The shape and fill classifiers use OpenCV's [ORB](https://docs.opencv.org/3.0-alpha/doc/py_tutorials/py_feature2d/py_orb/py_orb.html){:target="_blank"}, a [feature detection](https://en.wikipedia.org/wiki/Feature_detection_(computer_vision){:target="_blank"}) algorithm. A feature is basically what the algorithm thinks is an "interesting" part of an image, oftentimes a corner/curve of a shape, or an isolated point, but there is no hard definition of what features can be. They are also repeatable - the algorithm needs to be able to use features to find the same object in different images.
 
-![shape keypoints]({{site.url}}/images/set-solver/shape_keypoints.jpg?style=centered)
+![shape keypoints](/images/set-solver/shape_keypoints.jpg?style=centered)
 *<center>Keypoints that ORB discovers.</center>*
 
 The classifiers start with a cutout of one of the shapes of the card that was found during the number classification step, and the top few features (the ones that ORB thinks are the most important) are [compared](https://github.com/nicolashahn/set-solver/blob/60ca53521cefb2b95b3e71a70fe3aabe3ef81b12/classify_card.py#L21){:target="_blank"} to the top few features of each of the possible labeled shape+fill combinations. The labeled shape with the most matches is used for the fill classification for the card.
 
 The shape classification is identical, save for one step: an edge detection filter `cv2.Canny()` is applied to the shape image before ORB is applied. This was added as a result of trial and error, but my intuition is that `Canny()` cuts down a lot of detail in the image that's useful for fill detection, but is just noise when looking at shape.
 
-![canny]({{site.url}}/images/set-solver/canny_shape.jpg?style=centered)
+![canny](/images/set-solver/canny_shape.jpg?style=centered)
 *<center>Canny edge detection reduces the image to pure white and black pixels, reducing noise.</center>*
 
 Now all four attributes of the card have been classified, and so we know what cards we have on the table. Now we can find all the sets.
@@ -105,7 +105,7 @@ Generating all 3-card combinations results in O(n<sup>3</sup>) runtime complexit
 
 Knowing which cards belong to what set, we can [draw colored boxes](https://github.com/nicolashahn/set-solver/blob/9c9cab40bbf3608cad13a990e3ebbc40a6337355/SetGame.py#L85){:target="_blank"} around the cards to indicate which are sets. The results:
 
-![set game]({{site.url}}/images/set-solver/solved11_small.jpg?style=centered)
+![set game](/images/set-solver/solved11_small.jpg?style=centered)
 
 And we're done! 
 
