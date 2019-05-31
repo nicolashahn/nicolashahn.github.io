@@ -17,7 +17,7 @@ performance comparison](#performance) if you want some hard numbers, [the
 takeaway](#takeaway) for the tl;dr, or go straight to the
 [Python](https://github.com/nicolashahn/diffimg),
 [Go](https://github.com/nicolashahn/diffimg-go), and
-[Rust](https://github.com/nicolashahn/diffimg-rs) implementations._
+[Rust](https://github.com/nicolashahn/diffimg-rs) `diffimg` implementations._
 
 A few years ago, I was tasked with rewriting an image processing service so we could
 host it in AWS Lambda. To tell whether my new service was creating the same output as
@@ -249,6 +249,17 @@ Some of the things that I took notice of when writing
     calculation](https://github.com/nicolashahn/diffimg-rs/blob/e9dd3f0331b3e32d2f62241b4d576d1da3d3cd42/src/lib.rs#L87)
     because I could simply map over the raw byte arrays instead of having to index each
     pixel by coordinate. A small win but pretty neat.
+
+- __Functional Features__: Rust strongly encourages a functional approach: it has a
+  FP-friendly type system like Haskell, immutable types, closures, iterators, pattern
+  matching, and more, but also allows imperative code. It's similar to writing OCaml
+  (interestingly, the original Rust compiler [was written in
+  OCaml](https://github.com/rust-lang/rust/tree/ef75860a0a72f79f97216f8aaa5b388d98da6480/src/boot)).
+  Because of this, code is more concise than you'd expect for a language that competes
+  with C (my Rust `diffimg` implementation is actually [a bit
+  shorter](https://github.com/nicolashahn/diffimg-rs/blob/master/src/lib.rs) than [the
+  Go
+  version](https://github.com/nicolashahn/diffimg-go/blob/master/pkg/diffimg/diffimg.go)).
 
 - __Error Handling__: Instead of the exception model that Python uses or the tuple
   returns that Go uses for error handling, Rust makes use of its enumerated types:
