@@ -34,7 +34,7 @@ the heavy lifting was done by
 command line tool. The actual
 [meat](https://github.com/nicolashahn/diffimg/blob/master/diffimg/diff.py) of the
 program is very small, only a few dozen lines.  This is due to making use of Pillow's
-`ImageChops.difference()` function, which generates the diff image - the ratio
+`ImageChops.difference()` function, which generates the diff image. The ratio
 calculation is only a few more lines. Not a lot of effort went into building this tool
 ([xkcd was right](https://xkcd.com/353/), there's a Python module for nearly
 everything), but it's been very handy to many people.
@@ -220,15 +220,15 @@ Some of the things that I took notice of when writing
 [diffimg-rs](https://github.com/nicolashahn/diffimg-rs):
 
 - __Type System__: I was comfortable with the more basic static type system of Go by
-  now, but Rust's is significantly more powerful and complicated. Generic types,
+  now, but Rust's is significantly more powerful (and complicated). Generic types,
   enumerated types, traits, reference types, lifetimes are all additional concepts that
   I had to learn on top of Go's much simpler interfaces and structs. Additionally, Rust
   uses its type system to implement features that other languages don't use the type
   system for (example: the [Result](https://doc.rust-lang.org/std/result/) type, which
   I'll talk about soon).  Luckily, the compiler/linter is extremely helpful in telling
-  you what you're doing wrong, and often even tells you exactly how to fix it. I've
-  spent significantly more time than I did learning Go's type system and I'm still not
-  comfortable with all the features yet.
+  you what you're doing wrong, and often even tells you exactly how to fix it. Despite
+  this, I've spent significantly more time than I did learning Go's type system and I'm
+  still not comfortable with all the features yet.
   - There was one place where because of the type system, the implementation of the
     imaging library I was using [would have led to an uncomfortable amount of code
     repetition.](https://github.com/nicolashahn/diffimg-rs/blob/e9dd3f0331b3e32d2f62241b4d576d1da3d3cd42/src/lib.rs#L105)
