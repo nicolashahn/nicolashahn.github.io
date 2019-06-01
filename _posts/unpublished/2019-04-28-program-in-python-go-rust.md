@@ -409,8 +409,9 @@ in the middle, though I enjoy writing Python and Rust more than Go ([this may be
 unsurprising](https://insights.stackoverflow.com/survey/2019#technology-_-most-loved-dreaded-and-wanted-languages)).
 I'll continue to use Go at work happily (along with Python) since it really is a great
 language for building stable and maintainable applications with many contributors from
-many backgrounds. If I had to choose the language for the backend of a new web
-application, it would be Go.
+many backgrounds. Its inflexibility and minimalism which makes it less enjoyable to use
+(for me) becomes its strength here. If I had to choose the language for the backend of a
+new web application, it would be Go.
 
 I'm pretty satisfied with the range of programming tasks that are covered by these three
 languages - there's virtually no project that one of them wouldn't be a great choice
