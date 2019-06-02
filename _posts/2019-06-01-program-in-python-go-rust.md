@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      One Program Written in Python, Go, and Rust
-date:       2019-04-28
+date:       2019-06-01
 summary:    Image differentiation in three languages
 categories: python go rust programming
 published:  false
@@ -20,16 +20,16 @@ takeaway](#takeaway) for the tl;dr, or go straight to the
 [Rust](https://github.com/nicolashahn/diffimg-rs) `diffimg` implementations._
 
 A few years ago, I was tasked with rewriting an image processing service so we could
-host it in AWS Lambda. To tell whether my new service was creating the same output as
-the old given an image and one or more transforms (resize to X by Y, make a circular
-crop, etc.), I had to inspect the images myself. Clearly I needed to automate this, but
-I could find no existing Python library that simply told me how different two images
-were on a per-pixel basis.  Hence [diffimg](https://github.com/nicolashahn/diffimg),
-which can give you a difference ratio/percentage, or generate a diff image (check out
-the readme to see an example).
+host it in an [AWS Lambda](https://aws.amazon.com/lambda/) function. To tell whether my
+new service was creating the same output as the old given an image and one or more
+transforms (resize to X by Y, make a circular crop, etc.), I had to inspect the images
+myself. Clearly I needed to automate this, but I could find no existing Python library
+that simply told me how different two images were on a per-pixel basis.  Hence
+[diffimg](https://github.com/nicolashahn/diffimg), which can give you a difference
+ratio/percentage, or generate a diff image (check out the readme to see an example).
 
 The initial implementation was in Python (the language I'm most comfortable in), with
-the heavy lifting was done by
+the heavy lifting done by
 [Pillow](https://pillow.readthedocs.io/en/stable/). It's usable as a library or a
 command line tool. The actual
 [meat](https://github.com/nicolashahn/diffimg/blob/master/diffimg/diff.py) of the
@@ -39,8 +39,8 @@ calculation is only a few more lines. Not a lot of effort went into building thi
 ([xkcd was right](https://xkcd.com/353/), there's a Python module for nearly
 everything), but it's been very handy to many people.
 
-A few months ago, I joined a company that had several services written in Go, and I need
-to get up to speed quickly on the language. Writing
+A few months ago, I joined a company that had several services written in Go, and I
+needed to get up to speed quickly on the language. Writing
 [diffimg-go](https://github.com/nicolashahn/diffimg-go) seemed like an fun and possibly
 even useful way to do this. Here are a few points of interest that came out of the
 experience, along with some that came up while using it at work: 
@@ -51,56 +51,47 @@ experience, along with some that came up while using it at work:
 [diffimg-go](https://github.com/nicolashahn/diffimg-go))
 
 - __Standard Library__: Go comes with a decent [image](https://golang.org/pkg/image/)
-  standard library module, as well as a command line argument parsing library. I didn't
-  feel that I had to look for any external dependencies, and I ended up not needing them
-  -- the `diffimg-go` implementation has none, where the Python implementation uses the
-  fairly heavy third party module (ironically) named Pillow. I think Go's standard
-  library in general is more structured and well thought out, Python's feels as if it
-  were organically evolved, created by many authors over years, with many differing
+  standard library module, as well as a command line
+  [flag](https://golang.org/pkg/flag/) parsing library. I didn't need to look for any
+  external dependencies -- the `diffimg-go` implementation has none, where the Python
+  implementation uses the fairly heavy third party module (ironically) named Pillow.
+  Go's standard library in general is more structured and well thought out, Python's is
+  organically evolved, created by many authors over years, with many differing
   conventions. The Go standard library's consistency makes it easier to predict how any
   given module will function, and the source code is extremely well documented. 
   - One downside of using the standard image library is that it does not automatically
     detect if the image has an alpha channel, pixel values have four channels (RGBA) for
     all image types.  The `diffimg-go` implementation therefore requires the user to
-    indicate whether or not they want to use the alpha channel for the calculation/image
-    generation. This small inconvenience wasn't worth finding a third party library to
-    fix, in my opinion.
+    indicate whether or not they want to use the alpha channel. This small inconvenience
+    wasn't worth finding a third party library to fix.
   - One big upside is that there's enough in the standard library that you don't need a
     web framework like Django. You can build out a real, usable API without any
     dependencies. Python's claim in the past has been that it's batteries-included, but
     Go does it better, in my opinion.
 
-- __Static Type System__: I've used typed languages in the past, but my programming for
-  the past few years has mostly been in Python. The experience was somewhat annoying at
-  first, it felt as though it was simply slowing me down and forcing me to be
-  excessively explicit whereas Python would just let me do what I wanted, even if I got
-  it wrong occasionally.  Somewhat like giving instructions to someone who always stops
-  you to ask you to clarify what you mean, versus someone who always nods along and
-  seems to understand you, though you're not always sure they're absorbing everything.
-  It will decrease the amount of a certain class of bugs for free, but I've found that I
-  still need to spend nearly the same amount of time writing tests.
+- __Static Type System__: I've used statically typed languages in the past, but my
+  programming for the past few years has mostly been in Python. The experience was
+  somewhat annoying at first, it felt as though it was simply slowing me down and
+  forcing me to be excessively explicit whereas Python would just let me do what I
+  wanted, even if I got it wrong occasionally.  Somewhat like giving instructions to
+  someone who always stops you to ask you to clarify what you mean, versus someone who
+  always nods along and seems to understand you, though you're not always sure they're
+  absorbing everything.  It will decrease the amount of type-related bugs for free, but
+  I've found that I still need to spend nearly the same amount of time writing tests.
   - One of the common complaints of Go is that it does not have user-implementable
     generic types. While this is not a must-have feature for building a large,
     extensible application, it certainly slows development speed.
     [Alternative patterns](https://appliedgo.net/generics/) have been suggested, but
     none of them are as effective as having real generic types.
-
-- __Verbosity__: Go is much more verbose (though not Java verbose). Part of that is
-  because type system does not have generics, but mainly the fact that the language
-  itself is very small and not overloaded with features (you only get [one looping
-  construct!](https://tour.golang.org/flowcontrol/1) I missed having list comprehensions
-  and other functional programming features), not that Python is. If you're comfortable
-  with Python, you can go through the [Tour of Go](https://tour.golang.org/welcome/1) in
-  a day or two, and you'll have been exposed to the entirety of the language. How I felt
-  at the end of it:
-
-  ![travolta_meme.gif](/images/travolta_meme.gif?style=centered)
+  - One upside of the static type system is that it reading through an unfamiliar
+    codebase is easier and faster. Good use of types imbues a lot of extra information
+    that is lost with a dynamic type system.
 
 - __Interfaces and Structs__: Go uses interfaces and structs where Python would use
   classes. This was probably the most interesting difference to me, as it forced me to
   differentiate the concept of a type that defines behavior versus a type that holds
-  information.  Python and other "classically object-oriented" languages would encourage
-  you to mash these together, but there are pros and cons to both paradigms:
+  information.  Python and other "traditionally object-oriented" languages would
+  encourage you to mash these together, but there are pros and cons to both paradigms:
   - Go heavily encourages [composition over
     inheritance](https://en.wikipedia.org/wiki/Composition_over_inheritance). While it
     has [inheritance via embedding](https://golang.org/doc/effective_go.html#embedding),
@@ -122,17 +113,77 @@ experience, along with some that came up while using it at work:
     interfaces and structs are the only way to know what's available at compile time and
     during development, making Go that compiles more trustworthy than Python that runs. 
 
-- __Error Handling__: Python has exceptions, whereas Go propagates errors by returning
-  tuples: `value, error` from functions wherever something may go wrong. Python lets
-  you catch errors at any point in the call stack as opposed to requiring you to
-  manually pass them back up over and over again. This again results in brevity and
-  code that isn't littered with Go's infamous `if err != nil` pattern, though you do
-  need to be aware of what possible exceptions can be thrown by a function and all(!) of
-  its internal calls (using `except Exception:` is a bad-practice workaround for this).
-  Good docstrings and tests can help here, which you should be writing in either
-  language.  Go's system is definitely safer. You're still allowed to shoot yourself in
-  the foot by just ignoring the `err` second tuple value, but it's more obvious that
-  this is a bad idea.
+To add some weight to my remarks so far about types, interfaces, and structs, let's see
+some similar Python and Go code:
+
+```python
+# Python
+
+class Dog:
+    def __init__(self, name, furry=True, happy=True):
+        self.furry = furry
+        self.happy = happy
+        self.name = name
+
+    def pet(self):
+        self.happy = True
+
+def main():
+    d = Dog("Jake", happy=False)
+    if d.furry:
+        d.pet()
+
+if __name__ == '__main__':
+    main()
+```
+
+```go
+// Go
+
+package main
+
+type Dog struct {
+  Furry bool
+  Happy bool
+  Name string
+}
+
+func MakeFurryDog(happy bool, name string) Dog {
+  return Dog{true, happy, name}
+}
+
+type Pettable interface {
+  Pet()
+}
+
+func (d Dog) Pet() {
+  d.Happy = true
+}
+
+func main() {
+  d := MakeFurryDog(false, "Jake")
+  if d.Furry {
+    d.Pet()
+  }
+}
+```
+  - Notable things from this example:
+    - We need to define a `Pettable` interface _and_ implement the `Pet` method for `Dog`.
+      Unfortunately, this means that you'll sometimes need to create very similar
+      implementations of the same interface for different types.  However, in exchange
+      for the effort, we get safety in return.  If we try something like
+      `d.Feed("kibble")`, Go will not compile, because we haven't implemented a
+      `Feedable` interface for `Dog`. In Python, if we try `d.feed("kibble")`, it will
+      happily chug along until we get to that line, then throw a runtime error.
+    - We need to define the struct and implement a constructor for `Mammal` to get the
+      desired custom default `Furry` value. In Go, when a struct is created with no
+      field arguments, `bool`s default to `false`, `string`s default to `""`, `int`s
+      default to `0`, etc.  Python lets us define the fields and constructor at once
+      with `__init__()`, and makes it easy to craft a struct with just the custom fields
+      that we want thanks to keyword arguments. Here in the Python code, we're saying
+      that dogs are usually furry and happy, but Jake is a sad dog (until he's petted).
+      We can't do that as easily with Go; we'd need to create multiple constructors.
+      Which brings me to my next point...
 
 - __Optional Arguments__: Go only has [variadic
   functions](https://gobyexample.com/variadic-functions) which are similar to Python's
@@ -142,6 +193,28 @@ experience, along with some that came up while using it at work:
   needs it without having to rewrite every one of its calls. This made my implementation
   for how to handle whether or not the diff image should be created based on the command
   line flags somewhat clumsy.
+
+- __Verbosity__: Go is a bit more verbose (though not Java verbose). Part of that is
+  because type system does not have generics, but mainly the fact that the language
+  itself is very small and not overloaded with features (you only get [one looping
+  construct!](https://tour.golang.org/flowcontrol/1)). I missed having Python's list
+  comprehensions and other functional programming features. If you're comfortable
+  with Python, you can go through the [Tour of Go](https://tour.golang.org/welcome/1) in
+  a day or two, and you'll have been exposed to the entirety of the language. How I felt
+  at the end of it:
+
+  ![travolta_meme.gif](/images/travolta_meme.gif?style=centered)
+
+- __Error Handling__: Python has exceptions, whereas Go propagates errors by returning
+  tuples: `value, error` from functions wherever something may go wrong. Python lets
+  you catch errors at any point in the call stack as opposed to requiring you to
+  manually pass them back up over and over again. This again results in brevity and
+  code that isn't littered with Go's infamous `if err != nil` pattern, though you do
+  need to be aware of what possible exceptions can be thrown by a function and all(!) of
+  its internal calls (using `except Exception:` is a bad-practice workaround for this).
+  Good docstrings and tests can help here, which you should be writing in either
+  language.  Go's system is definitely safer. You're still allowed to shoot yourself in
+  the foot by ignoring the `err` value, but it's more obvious that this is a bad idea.
 
 - __Third Party Modules__: Prior to [Go modules](https://blog.golang.org/modules2019),
   Go's package manager would just throw all downloaded packages into `$GOPATH/src`
@@ -233,9 +306,19 @@ Some of the things that I took notice of when writing
     imaging library I was using [would have led to an uncomfortable amount of code
     repetition.](https://github.com/nicolashahn/diffimg-rs/blob/e9dd3f0331b3e32d2f62241b4d576d1da3d3cd42/src/lib.rs#L105)
     I only ended up matching the two most important enum types, but matching the others
-    would lead another half dozen or so lines of nearly identical code. This rubs me the
-    wrong way, and maybe it's a good candidate for using macros, which I still need to
-    experiment with.
+    would lead another half dozen or so lines of nearly identical code. At this scale
+    it's not an issue, but it rubs me the wrong way, and maybe it's a good candidate for
+    using macros, which I still need to experiment with.
+    ```rust
+    let mut diff = match image1.color() {
+        image::ColorType::RGB(_) => image::DynamicImage::new_rgb8(w, h),
+        image::ColorType::RGBA(_) => image::DynamicImage::new_rgba8(w, h),
+        // keep going for all 7 types?
+        _ => return Err(
+            format!("color mode {:?} not yet supported", image1.color())
+        ),
+    };
+    ```
 
 - __Manual Memory Management__: Python and Go pick up your trash for you. C lets you
   litter everywhere, but throws a fit when it steps on your banana peel. Rust slaps you
@@ -246,9 +329,18 @@ Some of the things that I took notice of when writing
   what's really going on.
   - One nice part about having such direct access to the memory (and the functional
     programming features of Rust) is that it simplified the [difference ratio
-    calculation](https://github.com/nicolashahn/diffimg-rs/blob/e9dd3f0331b3e32d2f62241b4d576d1da3d3cd42/src/lib.rs#L87)
+    calculation](https://github.com/nicolashahn/diffimg-rs/blob/623fb06272f696da9673ccc0cb7ea5bd55582b49/src/lib.rs#L80)
     because I could simply map over the raw byte arrays instead of having to index each
     pixel by coordinate. A small win but pretty neat.
+    ```rust
+    for (&p1, &p2) in image1
+        .raw_pixels()
+        .iter()
+        .zip(image2.raw_pixels().iter()) 
+    {
+        diffsum += u64::from(abs_diff(p1, p2));
+    }
+    ```
 
 - __Functional Features__: Rust strongly encourages a functional approach: it has a
   FP-friendly type system like Haskell, immutable types, closures, iterators, pattern
@@ -353,17 +445,17 @@ through 100,000,000 times, never needing to pause for garbage collection.
 
 The Python implementation definitely has room for improvement, because as efficient as
 Pillow is, we're still creating a diff image in memory (traversing both input images)
-and then adding up each of its pixel's channel values. Effectively, we're looping over
-three images instead of two like the Rust and Go implementations, so I would expect a
-similar but more direct approach would cut its run time by roughly a third. However, a
-pure Python implementation would be wildly slower, since Pillow does its main work in C.
+and _then_ adding up each of its pixel's channel values. A more direct approach like the
+Go and Rust implementations would probably be marginally faster. However, a _pure_
+Python implementation would be wildly slower, since Pillow does its main work in C.
 Because the other two are pure language implementations, this isn't really a fair
 comparison, though in some ways it is, because Python has an absurd amount of libraries
-available to you that are performant thanks to C extensions.
+available to you that are performant thanks to C extensions (and Python and C have a
+very tight relationship in general).
 
 I should also mention the binary sizes: Rust's is 2.1mb with the `--release` build, and
 Go's is comparable at 2.5mb. Python doesn't create binaries, but `.pyc` files are
-somewhat comparable, and `diffimg`'s `.pyc` files are about 3kb in total. Its source
+_sort of_ comparable, and `diffimg`'s `.pyc` files are about 3kb in total. Its source
 code is also only about 3kb, but including the Pillow dependency, it weighs in at
 24mb(!). Again, not a fair comparison because I'm using a third party imaging library,
 but it should be mentioned.
@@ -398,9 +490,8 @@ With respect to the type systems: static type systems make it easier to write mo
 correct code, but it's not a panacea.  You still need to write comprehensive tests no
 matter the language you use.  It requires a bit more discipline, but I've found that the
 code I write in Python is not necessarily more error prone than Go as long as I'm able
-to write a good suite of tests. That said, I much prefer Rust's type system to Go's, for
-two reasons: it supports generics, and it leverages the type system for error handling
-and other language features.
+to write a good suite of tests. That said, I much prefer Rust's type system to Go's: it
+supports generics, pattern matching, does error handling, and just does more in general.
 
 In the end, this comparison is a bit silly, because though the use cases of these
 languages overlap, they occupy very different niches. Python is high on the
