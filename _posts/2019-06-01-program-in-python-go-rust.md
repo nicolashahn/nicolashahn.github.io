@@ -12,10 +12,10 @@ published:  false
 ![Python, Go, Rust logos](/images/program-in-python-go-rust/python-go-rust.png)
 
 _This is a subjective, primarily developer-ergonomics-based comparison of the
-three languages from the perspective of a Python developer, but you can [skip to
-performance comparison](#performance) if you want some hard numbers, [the
-takeaway](#the-takeaway) for the tl;dr, or go straight to the
-[Python](https://github.com/nicolashahn/diffimg),
+three languages from the perspective of a Python developer, but you can skip the prose
+and go to [the code samples](#code-samples), or [the performance comparison](#performance)
+if you want some hard numbers, [the takeaway](#the-takeaway) for the tl;dr, or go
+straight to the [Python](https://github.com/nicolashahn/diffimg),
 [Go](https://github.com/nicolashahn/diffimg-go), and
 [Rust](https://github.com/nicolashahn/diffimg-rs) `diffimg` implementations._
 
@@ -182,7 +182,8 @@ func main() {
       that we want thanks to keyword arguments. Here in the Python code, we're saying
       that dogs are usually furry and happy, but Jake is a sad dog (until he's petted).
       We can't do that as easily with Go; we'd need to create multiple constructors.
-      Which brings me to my next point...
+      Here, that would be trivial, but in a real, complex project, it becomes a lot of
+      extra work.  Which brings me to my next point...
 
 - __Optional Arguments__: Go only has [variadic
   functions](https://gobyexample.com/variadic-functions) which are similar to Python's
@@ -241,11 +242,11 @@ func main() {
 
 ### Go summary
 
-My initial impression of Go is that because its ability to abstract is fairly limited,
-it's not as _fun_ a language as Python is. Python has more features and thus more ways
-of doing something, and it can be a lot of fun to find the fastest, most readable, or
-"cleverest" solution. Go actively tries to stop you from being "clever." I might even go
-as far as saying that Go's strength is that it's *not* clever.
+My initial impression of Go is that because its ability to abstract is (purposely)
+limited, it's not as _fun_ a language as Python is. Python has more features and thus
+more ways of doing something, and it can be a lot of fun to find the fastest, most
+readable, or "cleverest" solution. Go actively tries to stop you from being "clever." I
+might even go as far as saying that Go's strength is that it's *not* clever.
 
 Its minimalism and lack of freedom are constraining as a single developer just trying to
 materialize an idea. However, this weakness becomes its strength when the project scales
@@ -324,17 +325,7 @@ Some of the things that I took notice of when writing
     programming features of Rust) is that it simplified the [difference ratio
     calculation](https://github.com/nicolashahn/diffimg-rs/blob/623fb06272f696da9673ccc0cb7ea5bd55582b49/src/lib.rs#L80)
     because I could simply map over the raw byte arrays instead of having to index each
-    pixel by coordinate. The functional features also make this block of code quite
-    concise for how much it does, but it remains readable.
-    ```rust
-    for (&p1, &p2) in image1
-        .raw_pixels()
-        .iter()
-        .zip(image2.raw_pixels().iter()) 
-    {
-        diffsum += u64::from(abs_diff(p1, p2));
-    }
-    ```
+    pixel by coordinate.
 
 - __Functional Features__: Rust strongly encourages a functional approach: it has a
   FP-friendly type system like Haskell, immutable types, closures, iterators, pattern
@@ -342,10 +333,7 @@ Some of the things that I took notice of when writing
   (interestingly, the original Rust compiler [was written in
   OCaml](https://github.com/rust-lang/rust/tree/ef75860a0a72f79f97216f8aaa5b388d98da6480/src/boot)).
   Because of this, code is more concise than you'd expect for a language that competes
-  with C (my Rust `diffimg` implementation is actually [a bit
-  shorter](https://github.com/nicolashahn/diffimg-rs/blob/master/src/lib.rs) than [the
-  Go
-  version](https://github.com/nicolashahn/diffimg-go/blob/master/pkg/diffimg/diffimg.go)).
+  with C.
 
 - __Error Handling__: Instead of the exception model that Python uses or the tuple
   returns that Go uses for error handling, Rust makes use of its enumerated types:
@@ -381,7 +369,8 @@ Some of the things that I took notice of when writing
 - __Debugging__: I haven't tried out a debugger with Rust yet (since the type system and
   `println!` take you pretty far), but you can use `rust-gdb` and `rust-lldb`, wrappers
   around the `gdb` and `lldb` debuggers that are installed with the initial `rustup`.
-  The experience should be predictable if you've used those debuggers before with C.
+  The experience should be predictable if you've used those debuggers before with C. As
+  mentioned previously, the compiler error messages are extremely helpful.
 
 ### Rust summary
 
@@ -403,9 +392,112 @@ any language and doesn't bring me a lot of headaches like some other languages I
 used. I really like using the language and will continue to look for opportunities to do
 so, where the performance of Python isn't good enough.
 
+## [Code Samples](#code-samples)
+
+I've extracted the chunks of each `diffimg` which calculate the difference ratio.  To
+summarize how it works for Python, this takes the diff image generated by Pillow, sums
+the values of all channels of all pixels, and returns the ratio produced by dividing the
+maximum possible value (a pure white image of the same size) by this sum.
+
+__Python__:
+```python
+
+diff_img = ImageChops.difference(im1, im2)
+stat = ImageStat.Stat(diff_img)
+sum_channel_values = sum(stat.mean)
+max_all_channels = len(stat.mean) * 255
+diff_ratio = sum_channel_values / max_all_channels
+
+```
+
+For Go and Rust, the method is a little different: Instead of creating a diff image, we
+just loop over both input images and keep a running sum of the differences of each
+pixel. In Go, we're indexing into each image by coordinate...
+
+__Go__:
+```go
+
+func GetRatio(im1, im2 image.Image, ignoreAlpha bool) float64 {
+  var sum uint64
+  width, height := getWidthAndHeight(im1)
+  for y := 0; y < height; y++ {
+    for x := 0; x < width; x++ {
+      sum += uint64(sumPixelDiff(im1, im2, x, y, ignoreAlpha))
+    }
+  }
+  var numChannels = 4
+  if ignoreAlpha {
+    numChannels = 3
+  }
+  totalPixVals := (height * width) * (maxChannelVal * numChannels)
+  return float64(sum) / float64(totalPixVals)
+}
+
+```
+
+... but in Rust, we're treating the images as what they really are in memory, a series
+of bytes that we can just zip together and consume.
+
+__Rust__:
+```rust
+
+pub fn calculate_diff(
+    image1: DynamicImage,
+    image2: DynamicImage
+  ) -> f64 {
+  let max_val = u64::pow(2, 8) - 1;
+  let mut diffsum: u64 = 0;
+  for (&p1, &p2) in image1
+      .raw_pixels()
+      .iter()
+      .zip(image2.raw_pixels().iter()) {
+    diffsum += u64::from(abs_diff(p1, p2));
+  }
+  let total_possible = max_val * image1.raw_pixels().len() as u64;
+  let ratio = diffsum as f64 / total_possible as f64;
+
+  ratio
+}
+
+```
+
+Some things to take note of in these examples:
+- Python has the least code by far. Obviously, it's leaning heavily on features of the
+  image library it's using, but I think this is indicative of the general experience of
+  using Python. In many cases, a lot of the work has been done for you because the
+  ecosystem is so developed that there are mature pre-existing solutions for everything.
+- There's type conversion in the Go and Rust examples. In each block there are three
+  numerical types being used: `uint8`/`u8` for the pixel channel values (the type is
+  inferred in both Go and Rust, so you don't see any explicit mention of either type),
+  `uint64`/`u64` for the sum, and `float64`/`f64` for the final ratio. For Go and Rust,
+  there was time spent getting the types to line up, whereas Python converts everything
+  implicitly.
+- The Go implementation's style is very imperative, but also explicit and
+  understandable (minus the `ignoreAlpha` part I mentioned earlier), even to those
+  unaccustomed to the language. I think the Python example is fairly clear as well, once
+  you understand what `ImageStat` is doing. Rust is definitely murkier to those
+  unfamiliar with the language:
+  - `.raw_pixels()` gets the image as a vector of unsigned 8-bit integers.
+  - `.iter()` creates an iterator for that vector. Vectors by default are not iterable.
+  - `.zip()` you may be familiar with, it takes two iterators and produces one, with
+    each element being a tuple: (element from first vector, element from second vector).
+  - We need a `mut` in our `diffsum` declaration because by default, variables are
+    immutable.
+  - If you're familiar with C you can probably figure out why we have the `&`s in `for
+    (&p1, &p2)`: The iterator produces references to the pixel values, but `abs_diff()`
+    takes the values themselves. Go supports pointers ([which are not quite the same as
+    references](https://spf13.com/post/go-pointers-vs-references/)), but they're not as
+    commonly used as references are in Rust.
+  - The last statement in a function is used as the return value if there isn't a
+    line-ending `;`. A few other functional languages do this as well.
+
+  This snippet gives you some insight into how much language-specific knowledge you'll
+  need to pick up to be effective in Rust.
+
+
 ## [Performance](#performance)
 
-Now for something resembling an objective comparison. I first generated three random
+Now for something resembling a scientific comparison. I first generated three random
 images of different sizes: 1x1, 2000x2000, and 10,000x10,000. Then I measured each
 (language, image size) combination's performance 10 times for each `diffimg` ratio
 calculation and averaged them, using the values given by the `real` values from the
@@ -413,7 +505,7 @@ calculation and averaged them, using the values given by the `real` values from 
 build`, and the Python `diffimg` invoked with `python3 -m diffimg`. The results, on a
 2015 Macbook Pro:
 
-| Image size: | 1x1             | 2000x2000          | 10,000x10,000        |
+| Image size: | 1x1             | 2000x2000          | 10,000x10,000      |
 |-------------|-----------------|--------------------|--------------------|
 | Rust        | 0.001s          | 0.490s             | 5.871s             |
 | Go          | 0.002s __(2x)__ | 0.756s __(1.54x)__ | 14.060s __(2.39x)__|
@@ -485,7 +577,8 @@ correct code, but it's not a panacea.  You still need to write comprehensive tes
 matter the language you use.  It requires a bit more discipline, but I've found that the
 code I write in Python is not necessarily more error prone than Go as long as I'm able
 to write a good suite of tests. That said, I much prefer Rust's type system to Go's: it
-supports generics, pattern matching, handles errors, and just does more in general.
+supports generics, pattern matching, handles errors, and just does more for you in
+general.
 
 In the end, this comparison is a bit silly, because though the use cases of these
 languages overlap, they occupy very different niches. Python is high on the
