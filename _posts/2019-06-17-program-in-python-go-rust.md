@@ -390,9 +390,9 @@ pub fn calculate_diff(
 
 Some things to take note of in these examples:
 - Python has the least code by far. Obviously, it's leaning heavily on features of the
-  image library it's using, but I think this is indicative of the general experience of
-  using Python. In many cases, a lot of the work has been done for you because the
-  ecosystem is so developed that there are mature pre-existing solutions for everything.
+  image library it's using, but this is indicative of the general experience of using
+  Python. In many cases, a lot of the work has been done for you because the ecosystem
+  is so developed that there are mature pre-existing solutions for everything.
 - There's type conversion in the Go and Rust examples. In each block there are three
   numerical types being used: `uint8`/`u8` for the pixel channel values (the type is
   inferred in both Go and Rust, so you don't see any explicit mention of either type),
@@ -401,9 +401,9 @@ Some things to take note of in these examples:
   implicitly.
 - The Go implementation's style is very imperative, but also explicit and
   understandable (minus the `ignoreAlpha` part I mentioned earlier), even to those
-  unaccustomed to the language. I think the Python example is fairly clear as well, once
-  you understand what `ImageStat` is doing. Rust is definitely murkier to those
-  unfamiliar with the language:
+  unaccustomed to the language. The Python example is fairly clear as well, once you
+  understand what `ImageStat` is doing. Rust is definitely murkier to those unfamiliar
+  with the language:
   - `.raw_pixels()` gets the image as a vector of unsigned 8-bit integers.
   - `.iter()` creates an iterator for that vector. Vectors by default are not iterable.
   - `.zip()` you may be familiar with, it takes two iterators and produces one, with
@@ -486,11 +486,10 @@ is open to you.
 
 For your backend server needs, Python has proven itself to be "fast enough" for
 most applications, though if you need more performance, Go has it. Rust even more so,
-but I think you pay for it with development time. Go is not far off from Python in this
-regard, though it certainly is slower to develop, primarily due to its small feature
-set. Rust is very fully featured, but managing memory will always take more time than
-having the language do it, and I think this outweighs having to deal with Go's
-minimality.
+but you pay for it with development time. Go is not far off from Python in this regard,
+though it certainly is slower to develop, primarily due to its small feature set. Rust
+is very fully featured, but managing memory will always take more time than having the
+language do it, and this outweighs having to deal with Go's minimality.
 
 It should also be mentioned that there are many, many Python developers in the world,
 some with literally decades of experience. It will likely never be hard to find more
