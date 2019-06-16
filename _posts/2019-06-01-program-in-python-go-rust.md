@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      One Program Written in Python, Go, and Rust
-date:       2019-06-01
+date:       2019-06-17
 summary:    Image differentiation in three languages
 categories: python go rust programming
 published:  false
@@ -111,79 +111,6 @@ experience, along with some that came up while using it at work:
     exactly what methods/attributes will exist until runtime. Statically defined
     interfaces and structs are the only way to know what's available at compile time and
     during development, making Go that compiles more trustworthy than Python that runs. 
-
-To add some weight to my remarks so far about types, interfaces, and structs, let's see
-some similar Python and Go code:
-
-```python
-# Python
-
-class Dog:
-    def __init__(self, name, furry=True, happy=True):
-        self.furry = furry
-        self.happy = happy
-        self.name = name
-
-    def pet(self):
-        self.happy = True
-
-def main():
-    d = Dog("Jake", happy=False)
-    if d.furry:
-        d.pet()
-
-if __name__ == '__main__':
-    main()
-```
-
-```go
-// Go
-
-package main
-
-type Dog struct {
-  Furry bool
-  Happy bool
-  Name string
-}
-
-func MakeFurryDog(happy bool, name string) Dog {
-  return Dog{true, happy, name}
-}
-
-type Pettable interface {
-  Pet()
-}
-
-func (d Dog) Pet() {
-  d.Happy = true
-}
-
-func main() {
-  d := MakeFurryDog(false, "Jake")
-  if d.Furry {
-    d.Pet()
-  }
-}
-```
-  - Notable things from this example:
-    - We need to define a `Pettable` interface _and_ implement the `Pet` method for `Dog`.
-      Unfortunately, this means that you'll sometimes need to create very similar
-      implementations of the same interface for different types.  However, in exchange
-      for the effort, we get safety in return.  If we try something like
-      `d.Feed("kibble")`, Go will not compile, because we haven't implemented a
-      `Feedable` interface for `Dog`. In Python, if we try `d.feed("kibble")`, it will
-      happily chug along until we get to that line, then throw a runtime error.
-    - We need to define the struct and implement a constructor for `Mammal` to get the
-      desired custom default `Furry` value. In Go, when a struct is created with no
-      field arguments, `bool`s default to `false`, `string`s default to `""`, `int`s
-      default to `0`, etc.  Python lets us define the fields and constructor at once
-      with `__init__()`, and makes it easy to craft a struct with just the custom fields
-      that we want thanks to keyword arguments. Here in the Python code, we're saying
-      that dogs are usually furry and happy, but Jake is a sad dog (until he's petted).
-      We can't do that as easily with Go; we'd need to create multiple constructors.
-      Here, that would be trivial, but in a real, complex project, it becomes a lot of
-      extra work.  Which brings me to my next point...
 
 - __Optional Arguments__: Go only has [variadic
   functions](https://gobyexample.com/variadic-functions) which are similar to Python's
