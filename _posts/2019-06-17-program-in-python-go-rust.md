@@ -52,21 +52,22 @@ experience, along with some that came up while using it at work:
 - __Standard Library__: Go comes with a decent [image](https://golang.org/pkg/image/)
   standard library module, as well as a command line
   [flag](https://golang.org/pkg/flag/) parsing library. I didn't need to look for any
-  external dependencies -- the `diffimg-go` implementation has none, where the Python
+  external dependencies; the `diffimg-go` implementation has none, where the Python
   implementation uses the fairly heavy third party module (ironically) named Pillow.
-  Go's standard library in general is more structured and well thought out, Python's is
-  organically evolved, created by many authors over years, with many differing
-  conventions. The Go standard library's consistency makes it easier to predict how any
-  given module will function, and the source code is extremely well documented. 
+  Go's standard library in general is more structured and well thought out, while
+  Python's is organically evolved, created by many authors over years, with many
+  differing conventions. The Go standard library's consistency makes it easier to
+  predict how any given module will function, and the source code is extremely well
+  documented. 
   - One downside of using the standard image library is that it does not automatically
     detect if the image has an alpha channel; pixel values have four channels (RGBA) for
     all image types.  The `diffimg-go` implementation therefore requires the user to
     indicate whether or not they want to use the alpha channel. This small inconvenience
     wasn't worth finding a third party library to fix.
   - One big upside is that there's enough in the standard library that you don't need a
-    web framework like Django. You can build out a real, usable API without any
-    dependencies. Python's claim in the past has been that it's batteries-included, but
-    Go does it better, in my opinion.
+    web framework like Django. It's possible to build a real, usable web service in Go
+    without any dependencies. Python's claim in the past has been that it's
+    batteries-included, but Go does it better, in my opinion.
 
 - __Static Type System__: I've used statically typed languages in the past, but my
   programming for the past few years has mostly been in Python. The experience was
@@ -96,10 +97,8 @@ experience, along with some that came up while using it at work:
     has [inheritance via embedding](https://golang.org/doc/effective_go.html#embedding),
     without classes, it's not easy to forward both data and methods. I generally agree
     that composition is the better default pattern to reach for, but I'm not an
-    absolutist and some solutions are a better fit for inheritance, so I'd prefer not to
-    have the language make this decision for me. I assume once you're more comfortable
-    with the pattern, it's not an issue anymore, and coming up with composition-only
-    code is second nature.
+    absolutist and some situations are a better fit for inheritance, so I'd prefer not
+    to have the language make this decision for me. 
   - Divorcing implementations for interfaces means you need to write similar code
     several times if you have many types that are similar to each other. Because of the
     lack of generic types, there are situations in Go where I wouldn't be able to reuse
@@ -112,14 +111,15 @@ experience, along with some that came up while using it at work:
     interfaces and structs are the only way to know what's available at compile time and
     during development, making Go that compiles more trustworthy than Python that runs. 
 
-- __Optional Arguments__: Go only has [variadic
+- __No Optional Arguments__: Go only has [variadic
   functions](https://gobyexample.com/variadic-functions) which are similar to Python's
   keyword arguments, but less useful, since the arguments need to be of the same type. I
   found keyword arguments to be something I really missed, mainly for how much easier
   refactoring is if you can just throw a `kwarg` of any type onto whatever function
-  needs it without having to rewrite every one of its calls. This made my implementation
-  for how to handle whether or not the diff image should be created based on the command
-  line flags somewhat clumsy.
+  needs it without having to rewrite every one of its calls. I use this feature quite
+  often in at work, it's saved me a lot of time over the years. Not having the feature
+  made my implementation for how to handle whether or not the diff image should be
+  created based on the command line flags somewhat clumsy.
 
 - __Verbosity__: Go is a bit more verbose (though not Java verbose). Part of that is
   because type system does not have generics, but mainly the fact that the language
@@ -135,8 +135,8 @@ experience, along with some that came up while using it at work:
   manually pass them back up over and over again. This again results in brevity and
   code that isn't littered with Go's infamous `if err != nil` pattern, though you do
   need to be aware of what possible exceptions can be thrown by a function and all(!) of
-  its internal calls (using `except Exception:` is a bad-practice workaround for this).
-  Good docstrings and tests can help here, which you should be writing in either
+  its internal calls (using `except Exception:` is a usually-bad-practice workaround for
+  this).  Good docstrings and tests can help here, which you should be writing in either
   language.  Go's system is definitely safer. You're still allowed to shoot yourself in
   the foot by ignoring the `err` value, but the system makes it obvious that this is a
   bad idea.
@@ -148,8 +148,8 @@ experience, along with some that came up while using it at work:
   so your import would look something like `import "github.com/someuser/somepackage"`.
   Embedding `github.com` inside the source code of almost all Go codebases seems like a
   strange choice. In any case, Go now allows the conventional way of doing things, but
-  Go modules are still new so this quirk will not disappear from Go source code any time
-  soon.
+  Go modules are still new so this quirk will remain common in wild Go code for some
+  time.
 
 - __Asynchronicity__: Goroutines are a very convenient way to fire off asynchronous
   tasks. Before `async/await`, Python's asynchronous solutions were somewhat hairy.
@@ -165,7 +165,8 @@ experience, along with some that came up while using it at work:
   [ipdb](https://pypi.org/project/ipdb/) are available) is extremely flexible, once
   you've entered the REPL, you're able to write whatever code you want.
   [Delve](https://github.com/go-delve/delve) is a good debugger, but it's not the same
-  as dropping straight into an interpreter.
+  as dropping straight into an interpreter, the full power of the language at your
+  fingertips.
 
 ### Go summary
 
@@ -228,7 +229,7 @@ Some of the things that I took notice of when writing
     repetition.](https://github.com/nicolashahn/diffimg-rs/blob/e9dd3f0331b3e32d2f62241b4d576d1da3d3cd42/src/lib.rs#L105)
     I only ended up matching the two most important enum types, but matching the others
     would lead another half dozen or so lines of nearly identical code. At this scale
-    it's not an issue, but it rubs me the wrong way, and maybe it's a good candidate for
+    it's not an issue, but it rubs me the wrong way. Maybe it's a good candidate for
     using macros, which I still need to experiment with.
     ```rust
     let mut diff = match image1.color() {
@@ -265,10 +266,12 @@ Some of the things that I took notice of when writing
 - __Error Handling__: Instead of the exception model that Python uses or the tuple
   returns that Go uses for error handling, Rust makes use of its enumerated types:
   `Result` returns either `Ok(value)` or `Err(error)`. This is closer to Go's way if you
-  squint, but is a bit more explicit and leverages the type system.
+  squint, but is a bit more explicit and leverages the type system. There's also
+  syntactic sugar for checking a statement for an `Err` and returning early: [the `?`
+  operator](https://doc.rust-lang.org/stable/edition-guide/rust-2018/error-handling-and-panics/the-question-mark-operator-for-easier-error-handling.html) (Go could use something like this, IMO).
 
 - __Asynchronicity__: Async/await hasn't quite landed for Rust yet, but the final syntax
-  has [just been agreed
+  has [recently been agreed
   upon](https://boats.gitlab.io/blog/post/await-decision-ii/). Rust also has some basic
   threading features in the standard library that seem a bit easier to use than
   Python's, but I haven't spent much time with it. Go still seems to have the best
@@ -311,13 +314,13 @@ understanding a few primitive data structures and some builtin functions. With R
 really need to understand the complexity inherent to the type system and borrow checker,
 or you're going to be getting tangled up a lot.
 
-As far as how I feel when I write the language, it's a lot of fun, like Python. Its
-breadth of features makes it very expressive. While the compiler stops you a lot,
-it's also very helpful, and its suggestions on how to solve your borrowing/typing
-problems usually work. The tooling as I've mentioned is the best I've encountered for
-any language and doesn't bring me a lot of headaches like some other languages I've
-used. I really like using the language and will continue to look for opportunities to do
-so, where the performance of Python isn't good enough.
+As far as how I feel when I write Rust, it's a lot of fun, like Python. Its breadth of
+features makes it very expressive. While the compiler stops you a lot, it's also very
+helpful, and its suggestions on how to solve your borrowing/typing problems usually
+work. The tooling as I've mentioned is the best I've encountered for any language and
+doesn't bring me a lot of headaches like some other languages I've used. I really like
+using the language and will continue to look for opportunities to do so, where the
+performance of Python isn't good enough.
 
 ## [Code Samples](#code-samples)
 
@@ -454,7 +457,8 @@ At 2000x2000, the gap narrows for both Go and Python compared to Rust, presumabl
 because less of the overall time is spent in setup compared to calculation. However,
 at 10,000x10,000, Rust is more performant in comparison, which I would guess is due to
 its compiler's optimizations producing the smallest block of machine code that is looped
-through 100,000,000 times, never needing to pause for garbage collection.
+through 100,000,000 times, dwarfing the setup time. Never needing to pause for garbage
+collection could also be a factor.
 
 The Python implementation definitely has room for improvement, because as efficient as
 Pillow is, we're still creating a diff image in memory (traversing both input images)
@@ -481,8 +485,8 @@ similar/competing languages. They're both good for writing server-side applicati
 (what I spend most of my time doing at work). Comparing just native code performance, Go
 blows Python away, but many of Python's libraries that require speed are wrappers around
 fast C implementations - in practice, it's more complicated than a naive comparison.
-Writing a C extension for Python doesn't really count as Python anymore, but the option
-is open to you.
+Writing a C extension for Python doesn't really count as Python anymore (and then you'll
+need to know C), but the option is open to you.
 
 For your backend server needs, Python has proven itself to be "fast enough" for
 most applications, though if you need more performance, Go has it. Rust even more so,
