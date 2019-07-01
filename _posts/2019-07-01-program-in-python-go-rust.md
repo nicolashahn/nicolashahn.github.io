@@ -1,10 +1,10 @@
 ---
 layout:     post
 title:      One Program Written in Python, Go, and Rust
-date:       2019-06-17
+date:       2019-07-01
 summary:    Image differentiation in three languages
 categories: python go rust programming
-published:  false
+published:  true
 ---
 
 <!-- NOTE use textwidth=88 when wrapping -->
@@ -13,9 +13,9 @@ published:  false
 
 _This is a subjective, primarily developer-ergonomics-based comparison of the
 three languages from the perspective of a Python developer, but you can skip the prose
-and go to [the code samples](#code-samples), or [the performance comparison](#performance)
-if you want some hard numbers, [the takeaway](#the-takeaway) for the tl;dr, or go
-straight to the [Python](https://github.com/nicolashahn/diffimg),
+and go to [the code samples](#code-samples), [the performance comparison](#performance)
+if you want some hard numbers, [the takeaway](#the-takeaway) for the tl;dr, or the
+[Python](https://github.com/nicolashahn/diffimg),
 [Go](https://github.com/nicolashahn/diffimg-go), and
 [Rust](https://github.com/nicolashahn/diffimg-rs) `diffimg` implementations._
 
@@ -32,11 +32,10 @@ the heavy lifting done by
 [Pillow](https://pillow.readthedocs.io/en/stable/). It's usable as a library or a
 command line tool. The actual
 [meat](https://github.com/nicolashahn/diffimg/blob/master/diffimg/diff.py) of the
-program is very small, only a few dozen lines.  This is due to making use of Pillow's
-`ImageChops.difference()` function, which generates the diff image. The ratio
-calculation is only a few more lines. Not a lot of effort went into building this tool
-([xkcd was right](https://xkcd.com/353/), there's a Python module for nearly
-everything), but it's been very handy to many people.
+program is very small, only a few dozen lines, thanks to Pillow. Not a lot of effort
+went into building this tool ([xkcd was right](https://xkcd.com/353/), there's a Python
+module for nearly everything), but it's at least been useful for a few dozen people
+other than myself.
 
 A few months ago, I joined a company that had several services written in Go, and I
 needed to get up to speed quickly on the language. Writing
@@ -66,8 +65,8 @@ experience, along with some that came up while using it at work:
     wasn't worth finding a third party library to fix.
   - One big upside is that there's enough in the standard library that you don't need a
     web framework like Django. It's possible to build a real, usable web service in Go
-    without any dependencies. Python's claim in the past has been that it's
-    batteries-included, but Go does it better, in my opinion.
+    without any dependencies. Python's claim is that it's batteries-included, but Go
+    does it better, in my opinion.
 
 - __Static Type System__: I've used statically typed languages in the past, but my
   programming for the past few years has mostly been in Python. The experience was
@@ -95,8 +94,8 @@ experience, along with some that came up while using it at work:
   - Go heavily encourages [composition over
     inheritance](https://en.wikipedia.org/wiki/Composition_over_inheritance). While it
     has [inheritance via embedding](https://golang.org/doc/effective_go.html#embedding),
-    without classes, it's not easy to forward both data and methods. I generally agree
-    that composition is the better default pattern to reach for, but I'm not an
+    without classes, it's not as easy to forward both data and methods. I generally
+    agree that composition is the better default pattern to reach for, but I'm not an
     absolutist and some situations are a better fit for inheritance, so I'd prefer not
     to have the language make this decision for me. 
   - Divorcing implementations for interfaces means you need to write similar code
@@ -153,9 +152,9 @@ experience, along with some that came up while using it at work:
 
 - __Asynchronicity__: Goroutines are a very convenient way to fire off asynchronous
   tasks. Before `async/await`, Python's asynchronous solutions were somewhat hairy.
-  Unfortunately I haven't written much real-world async code and the simplicity of
-  `diffimg` didn't seem to lend itself to the added overhead of asynchronicity, so I
-  don't have too much to say here, though I do like Go's
+  Unfortunately I haven't written much real-world async code in Python or Go, and the
+  simplicity of `diffimg` didn't seem to lend itself to the added overhead of
+  asynchronicity, so I don't have too much to say here, though I do like Go's
   [channels](https://gobyexample.com/channels) as a way to handle multiple async tasks.
   My understanding is that for performance, Go still has the upper hand here as
   goroutines can make use of full multiprocessor parallelism, where Python's basic
@@ -174,7 +173,7 @@ My initial impression of Go is that because its ability to abstract is (purposel
 limited, it's not as _fun_ a language as Python is. Python has more features and thus
 more ways of doing something, and it can be a lot of fun to find the fastest, most
 readable, or "cleverest" solution. Go actively tries to stop you from being "clever." I
-might even go as far as saying that Go's strength is that it's *not* clever.
+would go as far as saying that Go's strength is that it's *not* clever.
 
 Its minimalism and lack of freedom are constraining as a single developer just trying to
 materialize an idea. However, this weakness becomes its strength when the project scales
@@ -286,7 +285,7 @@ Some of the things that I took notice of when writing
 
 - __Editor Plugins__: My `.vimrc` is embarrassingly large, with at least three dozen
   plugins. I have some plugins for linting, autocompleting, and formatting both Python
-  and Go, but the Rust plugins were easier to set up, more helpful, and more stable
+  and Go, but the Rust plugins were easier to set up, more helpful, and more consistent
   compared to the other two languages. The
   [rust.vim](https://github.com/rust-lang/rust.vim) and
   [vim-lsp](https://github.com/prabirshrestha/vim-lsp) plugins (along with [the Rust
