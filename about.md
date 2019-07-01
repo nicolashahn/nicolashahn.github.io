@@ -16,4 +16,5 @@ he's done in the links below.
 [Github](https://github.com/nicolashahn) /
 [LinkedIn](https://www.linkedin.com/in/nicolasbhahn) /
 [Flickr](https://www.flickr.com/photos/hahncholo) /
-[Instagram](https://www.instagram.com/hahncholo/)
+[Instagram](https://www.instagram.com/hahncholo/) /
+[Twitter](https://www.twitter.com/Hahn_Cholo/)
