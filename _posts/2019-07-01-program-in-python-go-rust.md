@@ -9,7 +9,7 @@ published:  true
 
 <!-- NOTE use textwidth=88 when wrapping -->
 
-![Python, Go, Rust logos](/images/program-in-python-go-rust/python-go-rust.png)
+![Python, Go, Rust mascots](/images/program-in-python-go-rust/python-go-rust.png)
 
 _This is a subjective, primarily developer-ergonomics-based comparison of the
 three languages from the perspective of a Python developer, but you can skip the prose
