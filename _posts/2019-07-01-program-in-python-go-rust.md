@@ -11,6 +11,12 @@ published:  true
 
 ![Python, Go, Rust mascots](/images/program-in-python-go-rust/python-go-rust.png)
 
+__Update (2019-07-04):__ Some kind folks have suggested changes on the implementations
+to make them more idiomatic, so the code here may differ from what's currently in the
+repos.
+
+---
+
 _This is a subjective, primarily developer-ergonomics-based comparison of the
 three languages from the perspective of a Python developer, but you can skip the prose
 and go to [the code samples](#code-samples), [the performance comparison](#performance)
