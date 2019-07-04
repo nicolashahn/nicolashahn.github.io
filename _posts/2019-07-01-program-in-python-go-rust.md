@@ -173,7 +173,7 @@ experience, along with some that came up while using it at work:
   as dropping straight into an interpreter, the full power of the language at your
   fingertips.
 
-### Go summary
+### Go Summary
 
 My initial impression of Go is that because its ability to abstract is (purposely)
 limited, it's not as _fun_ a language as Python is. Python has more features and thus
@@ -307,7 +307,7 @@ Some of the things that I took notice of when writing
   The experience should be predictable if you've used those debuggers before with C. As
   mentioned previously, the compiler error messages are extremely helpful.
 
-### Rust summary
+### Rust Summary
 
 I definitely wouldn't recommend attempting to write Rust without at least
 going through the first few chapters of the book, even if you're already familiar with C
@@ -482,7 +482,7 @@ code is also only about 3kb, but including the Pillow dependency, it weighs in a
 24mb(!). Again, not a fair comparison because I'm using a third party imaging library,
 but it should be mentioned.
 
-## [The takeaway](#the-takeaway)
+## [The Takeaway](#the-takeaway)
 
 Obviously, these are three very different languages fulfilling different niches. I've
 heard Go and Rust often mentioned together, but I think Go and Python are the two more
