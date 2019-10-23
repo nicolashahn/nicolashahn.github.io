@@ -122,7 +122,7 @@ experience, along with some that came up while using it at work:
   found keyword arguments to be something I really missed, mainly for how much easier
   refactoring is if you can just throw a `kwarg` of any type onto whatever function
   needs it without having to rewrite every one of its calls. I use this feature quite
-  often in at work, it's saved me a lot of time over the years. Not having the feature
+  often in my work, it's saved me a lot of time over the years. Not having the feature
   made my implementation for how to handle whether or not the diff image should be
   created based on the command line flags somewhat clumsy.
 
