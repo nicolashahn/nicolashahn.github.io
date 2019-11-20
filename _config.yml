@@ -22,7 +22,7 @@ disqus_shortname:
 # Social icons
 github_username: nicolashahn
 stackoverflow_id: 4394625
-twitter_username:
+twitter_username: Hahn_Cholo
 google_plus_id:
 linkedin_username: nicolasbhahn
 angellist_username:
@@ -46,6 +46,7 @@ share_stumbleupon: false
 share_hackernews: false
 
 # Build settings
+future: true
 markdown:     kramdown
 redcarpet:
   extensions: ['smart', 'tables', 'with_toc_data']
