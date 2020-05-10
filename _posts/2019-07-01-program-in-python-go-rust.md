@@ -45,7 +45,7 @@ other than myself.
 
 A few months ago, I joined a company that had several services written in Go, and I
 needed to get up to speed quickly on the language. Writing
-[diffimg-go](https://github.com/nicolashahn/diffimg-go) seemed like an fun and possibly
+[diffimg-go](https://github.com/nicolashahn/diffimg-go) seemed like a fun and possibly
 even useful way to do this. Here are a few points of interest that came out of the
 experience, along with some that came up while using it at work: 
 
