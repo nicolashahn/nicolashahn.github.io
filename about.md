@@ -16,4 +16,4 @@ done in the links below.
 [LinkedIn](https://www.linkedin.com/in/nicolasbhahn) /
 [Flickr](https://www.flickr.com/photos/hahncholo) /
 [Instagram](https://www.instagram.com/hahncholo/) /
-[Twitter](https://www.twitter.com/___nzh/)
+[Twitter](https://www.twitter.com/mundicomplector/)
