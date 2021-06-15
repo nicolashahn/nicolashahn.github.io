@@ -7,8 +7,8 @@ permalink: /about/
 
 **Nicolas Hahn** has been an artist, photographer, animator, designer, NLP researcher,
 infrastructure engineer, web developer, and a [Recurser.](https://recurse.com) He
-is currently a software engineer in Brooklyn, NY. You can find out more about what he's
-done in the links below. 
+is currently a software engineer workin on augmented reality in San Francisco. You can
+find out more about what he's done in the links below.
 
 [Email](mailto:nicolas@stonespring.org) /
 [Resume](/files/NicolasHahnResume.pdf) /
