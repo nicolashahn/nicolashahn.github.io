@@ -17,3 +17,7 @@ You can find out more about me in the links below.
 [Flickr](https://www.flickr.com/photos/hahncholo) /
 [Instagram](https://www.instagram.com/hahncholo/) /
 [Twitter](https://www.twitter.com/mundicomplector/)
+
+__RECRUITERS__: Please don't contact me unless you'll provide: the name of the 
+company, role title and responsibilities, location/remote friendly, and 
+compensation.
